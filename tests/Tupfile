@@ -1,0 +1,7 @@
+include_rules
+
+ROOIBUS = $(TUP_CWD)/../rooibus/rooibus
+
+: source.c |> $(BIN)/clang -S -emit-llvm -o %o -O %f |> ir.ll
+: ir.ll | $(ROOIBUS) |> $(ROOIBUS) < %f > %o |> asm.js
+: asm.js |> diff expected.js %f && touch %o |> ok

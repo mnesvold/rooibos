@@ -3,6 +3,6 @@
 int
 main ( void )
 {
-  std::cout << "Rooibus Code Generator" << std::endl;
+  std::clog << "Rooibus Code Generator" << std::endl;
   return 0;
 }
