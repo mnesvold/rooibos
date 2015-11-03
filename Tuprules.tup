@@ -1,0 +1,13 @@
+ROOT = $(TUP_CWD)
+BIN = $(ROOT)/tools/bin
+
+CXX = $(BIN)/clang++
+CXXFLAGS = @(CXXFLAGS)
+CXXFLAGS += -fcolor-diagnostics
+CXXFLAGS += -Wall -Werror -pedantic
+!cxx = |> $(CXX) -c -o %o $(CXXFLAGS) %f |> %f.o
+
+LINK = $(CXX)
+LINKDIRS =
+LINKLIBS =
+!link = |> $(LINK) -o %o $(LINKDIRS) %f $(LINKLIBS) |>

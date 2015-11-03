@@ -1,0 +1,7 @@
+include_rules
+
+CXXFLAGS += -I$(ROOT)/tools/include
+LINKDIRS += -L$(ROOT)/tools/lib
+
+: foreach *.cc |> !cxx |> {objs}
+: {objs} |> !link |> rooibus
