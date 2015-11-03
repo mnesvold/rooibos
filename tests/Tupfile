@@ -1,7 +1,8 @@
 include_rules
 
-ROOIBUS = $(TUP_CWD)/../rooibus/rooibus
+ROOIBUS = $(TUP_CWD)/../rooibus/rooibus-codegen
 
 : source.c |> $(BIN)/clang -S -emit-llvm -o %o -O %f |> ir.ll
-: ir.ll | $(ROOIBUS) |> $(ROOIBUS) < %f > %o |> asm.js
-: asm.js |> diff expected.js %f && touch %o |> ok
+: source.c |> $(BIN)/clang -c -emit-llvm -o %o -O %f |> bitcode.bc
+: bitcode.bc | $(ROOIBUS) |> $(ROOIBUS) < %f > %o |> asm.json
+: asm.json |> diff expected.js %f && touch %o |> ok

@@ -5,6 +5,7 @@ CXX = $(BIN)/clang++
 CXXFLAGS = @(CXXFLAGS)
 CXXFLAGS += -fcolor-diagnostics
 CXXFLAGS += -Wall -Werror -pedantic
+CXXFLAGS += -std=c++11
 !cxx = |> $(CXX) -c -o %o $(CXXFLAGS) %f |> %f.o
 
 LINK = $(CXX)

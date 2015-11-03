@@ -1,7 +1,12 @@
 include_rules
 
-CXXFLAGS += -I$(ROOT)/tools/include
+CXXFLAGS += -D__STDC_LIMIT_MACROS -D__STDC_CONSTANT_MACROS
+CXXFLAGS += -I$(ROOT)/include
+CXXFLAGS += -I$(ROOT)/tools/include-src
+CXXFLAGS += -I$(ROOT)/tools/include-build
 LINKDIRS += -L$(ROOT)/tools/lib
+LINKLIBS += -lpthread -ldl -lcurses
+LINKLIBS += -lLLVMBitReader -lLLVMCore -lLLVMSupport
 
 : foreach *.cc |> !cxx |> {objs}
-: {objs} |> !link |> rooibus
+: {objs} |> !link |> rooibus-codegen
