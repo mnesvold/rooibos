@@ -34,6 +34,8 @@ namespace rooibus
     asmFunc->params.push_back(make_shared<IdentifierAST>("stdlib"));
     asmFunc->params.push_back(make_shared<IdentifierAST>("ffi"));
     asmFunc->params.push_back(make_shared<IdentifierAST>("heap"));
+    asmFunc->body.push_back(make_shared<ExpressionStatementAST>(
+          make_shared<LiteralAST>("use asm")));
     iifeFunc->body.push_back(make_shared<VariableDeclarationAST>(
           make_shared<IdentifierAST>("ASM"), asmFunc));
 

@@ -118,6 +118,16 @@ namespace rooibus
 
     nlohmann::json toJSON() const override;
   };
+
+  struct LiteralAST : ExpressionAST
+  {
+    explicit LiteralAST(const std::string & value) : value(value) {}
+
+    nlohmann::json toJSON() const override;
+
+  private:
+    nlohmann::json value;
+  };
 }
 
 #endif

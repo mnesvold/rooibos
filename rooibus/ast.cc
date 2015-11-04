@@ -104,4 +104,13 @@ namespace rooibus
       { "name", name }
     };
   }
+
+  json
+  LiteralAST::toJSON() const
+  {
+    return {
+      { "type", "Literal" },
+      { "value", value }
+    };
+  }
 }
