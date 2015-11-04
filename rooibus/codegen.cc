@@ -29,6 +29,14 @@ namespace rooibus
     iifeCall->arguments.push_back(make_shared<IdentifierAST>("this"));
     auto iifeCallStmt = make_shared<ExpressionStatementAST>(iifeCall);
     program->body.push_back(iifeCallStmt);
+
+    auto asmFunc = make_shared<FunctionExpressionAST>();
+    asmFunc->params.push_back(make_shared<IdentifierAST>("stdlib"));
+    asmFunc->params.push_back(make_shared<IdentifierAST>("ffi"));
+    asmFunc->params.push_back(make_shared<IdentifierAST>("heap"));
+    iifeFunc->body.push_back(make_shared<VariableDeclarationAST>(
+          make_shared<IdentifierAST>("ASM"), asmFunc));
+
     return program;
   }
 }
