@@ -49,6 +49,15 @@ namespace rooibus
   }
 
   json
+  ReturnStatementAST::toJSON() const
+  {
+    return {
+      { "type", "ReturnStatement" },
+      { "argument", (argument ? argument->toJSON() : (json)nullptr) }
+    };
+  }
+
+  json
   VariableDeclarationAST::toJSON() const
   {
     return {
@@ -65,6 +74,26 @@ namespace rooibus
       { "type", "VariableDeclarator" },
       { "id", id->toJSON() },
       { "init", (init ? init->toJSON() : (json)nullptr) }
+    };
+  }
+
+  json
+  ObjectExpressionAST::toJSON() const
+  {
+    return {
+      { "type", "ObjectExpression" },
+      { "properties", jsonify(props) }
+    };
+  }
+
+  json
+  PropertyAST::toJSON() const
+  {
+    return {
+      { "type", "Property" },
+      { "key", key->toJSON() },
+      { "value", value->toJSON() },
+      { "kind", "init" }
     };
   }
 

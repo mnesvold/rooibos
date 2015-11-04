@@ -9,7 +9,9 @@
 namespace rooibus
 {
   struct ExpressionAST;
+  struct IdentifierAST;
   struct PatternAST;
+  struct PropertyAST;
   struct StatementAST;
   struct VariableDeclaratorAST;
 
@@ -40,6 +42,17 @@ namespace rooibus
 
     explicit ExpressionStatementAST(std::shared_ptr<ExpressionAST> expr)
     : expression(std::move(expr))
+    {}
+
+    nlohmann::json toJSON() const override;
+  };
+
+  struct ReturnStatementAST : StatementAST
+  {
+    std::shared_ptr<ExpressionAST> argument;
+
+    explicit ReturnStatementAST(std::shared_ptr<ExpressionAST> arg=nullptr)
+    : argument(arg)
     {}
 
     nlohmann::json toJSON() const override;
@@ -82,6 +95,21 @@ namespace rooibus
 
   struct ExpressionAST : ASTNode
   {
+  };
+
+  struct ObjectExpressionAST : ExpressionAST
+  {
+    std::vector<std::shared_ptr<PropertyAST>> props;
+
+    nlohmann::json toJSON() const override;
+  };
+
+  struct PropertyAST : ASTNode
+  {
+    std::shared_ptr<IdentifierAST> key;
+    std::shared_ptr<ExpressionAST> value;
+
+    nlohmann::json toJSON() const override;
   };
 
   struct FunctionExpressionAST : ExpressionAST
