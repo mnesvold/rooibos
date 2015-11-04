@@ -69,16 +69,6 @@ namespace rooibus
   }
 
   json
-  CallExpressionAST::toJSON() const
-  {
-    return {
-      { "type", "CallExpression" },
-      { "callee", callee->toJSON() },
-      { "arguments", jsonify(arguments) }
-    };
-  }
-
-  json
   FunctionExpressionAST::toJSON() const
   {
     return {
@@ -93,6 +83,16 @@ namespace rooibus
       } },
       { "generator", false },
       { "expression", false }
+    };
+  }
+
+  json
+  CallExpressionAST::toJSON() const
+  {
+    return {
+      { "type", "CallExpression" },
+      { "callee", callee->toJSON() },
+      { "arguments", jsonify(arguments) }
     };
   }
 

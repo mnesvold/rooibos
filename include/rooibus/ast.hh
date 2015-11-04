@@ -84,6 +84,14 @@ namespace rooibus
   {
   };
 
+  struct FunctionExpressionAST : ExpressionAST
+  {
+    std::vector<std::shared_ptr<PatternAST>> params;
+    std::vector<std::shared_ptr<StatementAST>> body;
+
+    nlohmann::json toJSON() const override;
+  };
+
   struct CallExpressionAST : ExpressionAST
   {
     std::shared_ptr<ExpressionAST> callee;
@@ -92,14 +100,6 @@ namespace rooibus
     explicit CallExpressionAST(std::shared_ptr<ExpressionAST> callee)
     : callee(std::move(callee))
     {}
-
-    nlohmann::json toJSON() const override;
-  };
-
-  struct FunctionExpressionAST : ExpressionAST
-  {
-    std::vector<std::shared_ptr<PatternAST>> params;
-    std::vector<std::shared_ptr<StatementAST>> body;
 
     nlohmann::json toJSON() const override;
   };
