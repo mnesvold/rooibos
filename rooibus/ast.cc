@@ -116,6 +116,17 @@ namespace rooibus
   }
 
   json
+  AssignmentExpressionAST::toJSON() const
+  {
+    return {
+      { "type", "AssignmentExpression" },
+      { "operator", "=" },
+      { "left", lhs->toJSON() },
+      { "right", rhs->toJSON() }
+    };
+  }
+
+  json
   CallExpressionAST::toJSON() const
   {
     return {

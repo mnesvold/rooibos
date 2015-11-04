@@ -120,6 +120,19 @@ namespace rooibus
     nlohmann::json toJSON() const override;
   };
 
+  struct AssignmentExpressionAST : ExpressionAST
+  {
+    std::shared_ptr<PatternAST> lhs;
+    std::shared_ptr<ExpressionAST> rhs;
+
+    AssignmentExpressionAST(std::shared_ptr<PatternAST> lhs,
+                            std::shared_ptr<ExpressionAST> rhs)
+    : lhs(lhs), rhs(rhs)
+    {}
+
+    nlohmann::json toJSON() const override;
+  };
+
   struct CallExpressionAST : ExpressionAST
   {
     std::shared_ptr<ExpressionAST> callee;

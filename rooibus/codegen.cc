@@ -59,7 +59,9 @@ namespace rooibus
          idents.ASM, asmFunc));
 
     auto asmCall = make_shared<CallExpressionAST>(idents.ASM);
-    iifeFunc->body.push_back(make_shared<ExpressionStatementAST>(asmCall));
+    asmCall->arguments.push_back(idents.globals);
+    iifeFunc->body.push_back(make_shared<VariableDeclarationAST>(
+          idents.asm_, asmCall));
 
     return program;
   }
