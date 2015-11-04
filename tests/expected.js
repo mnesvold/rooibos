@@ -7,5 +7,5 @@
     };
     var asm = ASM(globals);
     var adaptors = { ping: asm._ping };
-    return adaptors;
+    globals.ASM = adaptors;
 }(this));

@@ -106,7 +106,11 @@ namespace rooibus
     nlohmann::json toJSON() const override;
   };
 
-  struct ExpressionAST : ASTNode
+  struct PatternAST : ASTNode
+  {
+  };
+
+  struct ExpressionAST : PatternAST
   {
   };
 
@@ -176,11 +180,7 @@ namespace rooibus
     nlohmann::json toJSON() const override;
   };
 
-  struct PatternAST : ASTNode
-  {
-  };
-
-  struct IdentifierAST : ExpressionAST, PatternAST
+  struct IdentifierAST : ExpressionAST
   {
     std::string name;
     

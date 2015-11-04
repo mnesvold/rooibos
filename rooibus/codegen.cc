@@ -25,6 +25,7 @@ namespace {
       adaptors = make_shared<IdentifierAST>("adaptors"),
       ASM = make_shared<IdentifierAST>("ASM"),
       asm_ = make_shared<IdentifierAST>("asm"),
+      asmExtern = make_shared<IdentifierAST>("ASM"),
       ffi = make_shared<IdentifierAST>("ffi"),
       globals = make_shared<IdentifierAST>("globals"),
       heap = make_shared<IdentifierAST>("heap"),
@@ -95,7 +96,10 @@ namespace {
     auto adaptors = make_shared<ObjectExpressionAST>();
     iifeFunc->body.push_back(make_shared<VariableDeclarationAST>(
           idents.adaptors, adaptors));
-    iifeFunc->body.push_back(make_shared<ReturnStatementAST>(idents.adaptors));
+    iifeFunc->body.push_back(make_shared<ExpressionStatementAST>(
+          make_shared<AssignmentExpressionAST>(
+            make_shared<MemberExpressionAST>(idents.globals, idents.asmExtern),
+            idents.adaptors)));
 
     for(auto & func : module.getFunctionList())
     {
