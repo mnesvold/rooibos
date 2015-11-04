@@ -21,6 +21,7 @@ namespace
   struct Identifiers
   {
     const shared_ptr<IdentifierAST>
+      adaptors = make_shared<IdentifierAST>("adaptors"),
       ASM = make_shared<IdentifierAST>("ASM"),
       asm_ = make_shared<IdentifierAST>("asm"),
       ffi = make_shared<IdentifierAST>("ffi"),
@@ -62,6 +63,11 @@ namespace rooibus
     asmCall->arguments.push_back(idents.globals);
     iifeFunc->body.push_back(make_shared<VariableDeclarationAST>(
           idents.asm_, asmCall));
+
+    auto adaptors = make_shared<ObjectExpressionAST>();
+    iifeFunc->body.push_back(make_shared<VariableDeclarationAST>(
+          idents.adaptors, adaptors));
+    iifeFunc->body.push_back(make_shared<ReturnStatementAST>(idents.adaptors));
 
     return program;
   }
