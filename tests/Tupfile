@@ -9,4 +9,4 @@ UGLIFY = $(ROOT)/tools/node_modules/.bin/uglifyjs
 : bitcode.bc | $(ROOIBUS) |> $(ROOIBUS) < %f > %o |> asm.json
 : asm.json |> $(ESGENERATE) %f > %o |> asm.js
 : asm.js |> $(UGLIFY) %f > %o |> asm.min.js
-: asm.js |> cat %f && diff expected.js %f && touch %o |> ok
+: asm.js |> diff expected.js %f && touch %o |> ok
