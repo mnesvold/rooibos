@@ -1,9 +1,11 @@
 (function (globals) {
     var ASM = function (stdlib, ffi, heap) {
         'use asm';
-        return {};
+        function _ping() {
+        }
+        return { _ping: _ping };
     };
     var asm = ASM(globals);
-    var adaptors = {};
+    var adaptors = { ping: asm._ping };
     return adaptors;
 }(this));

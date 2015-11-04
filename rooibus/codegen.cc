@@ -4,14 +4,15 @@ using std::forward;
 using std::make_shared;
 using std::move;
 using std::shared_ptr;
+using std::string;
 using std::unique_ptr;
 
+using llvm::Function;
 using llvm::Module;
 
-using rooibus::IdentifierAST;
+namespace rooibus {
+namespace {
 
-namespace
-{
   template<class T, class... Args>
   unique_ptr<T> make_unique(Args&&... args)
   {
@@ -29,12 +30,40 @@ namespace
       heap = make_shared<IdentifierAST>("heap"),
       stdlib = make_shared<IdentifierAST>("stdlib"),
       this_ = make_shared<IdentifierAST>("this");
+
+    shared_ptr<IdentifierAST> forFunction(const string & name)
+    {
+      return make_shared<IdentifierAST>("_" + name);
+    }
+
+    shared_ptr<IdentifierAST> forFunctionExtern(const string & name)
+    {
+      return make_shared<IdentifierAST>(name);
+    }
   };
 
-}
+  void
+  codegen(Function & func,
+          Identifiers & idents,
+          shared_ptr<FunctionExpressionAST> asmFunc,
+          shared_ptr<ObjectExpressionAST> asmRet,
+          shared_ptr<ObjectExpressionAST> adaptors)
+  {
+      auto funcIdent = idents.forFunction(func.getName());
+      auto externIdent = idents.forFunctionExtern(func.getName());
 
-namespace rooibus
-{
+      auto impl = make_shared<FunctionDeclarationAST>(funcIdent);
+      asmFunc->body.push_back(impl);
+
+      asmRet->props.push_back(make_shared<PropertyAST>(funcIdent, funcIdent));
+
+      adaptors->props.push_back(make_shared<PropertyAST>(
+            externIdent,
+            make_shared<MemberExpressionAST>(idents.asm_, funcIdent)));
+  }
+
+} /* nested anonymous namespace */
+
   unique_ptr<ProgramAST>
   codegen(Module & module)
   {
@@ -54,8 +83,7 @@ namespace rooibus
     asmFunc->params.push_back(idents.heap);
     asmFunc->body.push_back(make_shared<ExpressionStatementAST>(
           make_shared<LiteralAST>("use asm")));
-    asmFunc->body.push_back(make_shared<ReturnStatementAST>(
-          make_shared<ObjectExpressionAST>()));
+    auto asmRetVal = make_shared<ObjectExpressionAST>();
     iifeFunc->body.push_back(make_shared<VariableDeclarationAST>(
          idents.ASM, asmFunc));
 
@@ -68,6 +96,12 @@ namespace rooibus
     iifeFunc->body.push_back(make_shared<VariableDeclarationAST>(
           idents.adaptors, adaptors));
     iifeFunc->body.push_back(make_shared<ReturnStatementAST>(idents.adaptors));
+
+    for(auto & func : module.getFunctionList())
+    {
+      codegen(func, idents, asmFunc, asmRetVal, adaptors);
+    }
+    asmFunc->body.push_back(make_shared<ReturnStatementAST>(asmRetVal));
 
     return program;
   }

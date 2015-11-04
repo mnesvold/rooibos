@@ -62,6 +62,19 @@ namespace rooibus
   {
   };
 
+  struct FunctionDeclarationAST : DeclarationAST
+  {
+    std::shared_ptr<IdentifierAST> name;
+    std::vector<std::shared_ptr<PatternAST>> params;
+    std::vector<std::shared_ptr<ExpressionAST>> body;
+
+    explicit FunctionDeclarationAST(std::shared_ptr<IdentifierAST> name)
+    : name(name)
+    {}
+
+    nlohmann::json toJSON() const override;
+  };
+
   struct VariableDeclarationAST : DeclarationAST
   {
     std::vector<std::shared_ptr<VariableDeclaratorAST>> decls;
@@ -109,6 +122,11 @@ namespace rooibus
     std::shared_ptr<IdentifierAST> key;
     std::shared_ptr<ExpressionAST> value;
 
+    PropertyAST(std::shared_ptr<IdentifierAST> key,
+                std::shared_ptr<ExpressionAST> value)
+    : key(key), value(value)
+    {}
+
     nlohmann::json toJSON() const override;
   };
 
@@ -140,6 +158,19 @@ namespace rooibus
 
     explicit CallExpressionAST(std::shared_ptr<ExpressionAST> callee)
     : callee(std::move(callee))
+    {}
+
+    nlohmann::json toJSON() const override;
+  };
+
+  struct MemberExpressionAST : ExpressionAST
+  {
+    std::shared_ptr<ExpressionAST> object;
+    std::shared_ptr<IdentifierAST> property;
+
+    MemberExpressionAST(std::shared_ptr<ExpressionAST> object,
+                        std::shared_ptr<IdentifierAST> property)
+    : object(object), property(property)
     {}
 
     nlohmann::json toJSON() const override;

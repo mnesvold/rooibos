@@ -58,6 +58,24 @@ namespace rooibus
   }
 
   json
+  FunctionDeclarationAST::toJSON() const
+  {
+    return {
+      { "type", "FunctionDeclaration" },
+      { "id", name->toJSON() },
+      { "params", jsonify(params) },
+      { "defaults", json::array() },
+      { "rest", nullptr },
+      { "body", {
+        { "type", "BlockStatement" },
+        { "body", jsonify(body) }
+      } },
+      { "generator", false },
+      { "expression", false }
+    };
+  }
+
+  json
   VariableDeclarationAST::toJSON() const
   {
     return {
@@ -133,6 +151,17 @@ namespace rooibus
       { "type", "CallExpression" },
       { "callee", callee->toJSON() },
       { "arguments", jsonify(arguments) }
+    };
+  }
+
+  json
+  MemberExpressionAST::toJSON() const
+  {
+    return {
+      { "type", "MemberExpression" },
+      { "object", object->toJSON() },
+      { "property", property->toJSON() },
+      { "calculated", false }
     };
   }
 

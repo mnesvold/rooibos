@@ -1,5 +1,4 @@
-int
-add ( int a, int b )
+void
+ping ( void )
 {
-  return a + b;
 }
