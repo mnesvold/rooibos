@@ -7,27 +7,10 @@
 #include <llvm/Support/DataStream.h>
 #include <llvm/Support/ErrorOr.h>
 #include <llvm/Support/ManagedStatic.h>
+#include <json.hpp>
 
 #include "rooibus/ast.hh"
-
-namespace rooibus
-{
-
-  template<class T, class... Args>
-  std::unique_ptr<T> make_unique(Args&&... args)
-  {
-    return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
-  }
-
-  std::unique_ptr<ProgramAST>
-  codegen(llvm::Module & module)
-  {
-    auto program = make_unique<ProgramAST>();
-    program->body.push_back(make_unique<EmptyStatementAST>());
-    return program;
-  }
-
-}
+#include "rooibus/codegen.hh"
 
 int
 main ( void )
@@ -61,7 +44,8 @@ main ( void )
   module->materializeAllPermanently();
 
   auto ast = rooibus::codegen(*module);
-  std::cout << *ast << std::endl;
+  auto json = ast->toJSON();
+  std::cout << json << std::endl;
 
   return 0;
 }

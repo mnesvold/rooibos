@@ -2,25 +2,26 @@
 #define ROOIBUS_AST_HH
 
 #include <memory>
-#include <ostream>
 #include <vector>
+
+#include <json.hpp>
 
 namespace rooibus
 {
+  struct ExpressionAST;
+  struct PatternAST;
   struct StatementAST;
 
   struct ASTNode
   {
     virtual ~ASTNode() {}
-    virtual void writeTo(std::ostream & out) const = 0;
+    virtual nlohmann::json toJSON() const = 0;
   };
-
-  std::ostream & operator<<(std::ostream & out, const ASTNode & node);
 
   struct ProgramAST : ASTNode
   {
-    std::vector<std::unique_ptr<StatementAST>> body;
-    void writeTo(std::ostream & out) const override;
+    std::vector<std::shared_ptr<StatementAST>> body;
+    nlohmann::json toJSON() const override;
   };
 
   struct StatementAST : ASTNode
@@ -29,7 +30,56 @@ namespace rooibus
 
   struct EmptyStatementAST : StatementAST
   {
-    void writeTo(std::ostream & out) const override;
+    nlohmann::json toJSON() const override;
+  };
+
+  struct ExpressionStatementAST : StatementAST
+  {
+    std::shared_ptr<ExpressionAST> expression;
+
+    explicit ExpressionStatementAST(std::shared_ptr<ExpressionAST> expr)
+    : expression(std::move(expr))
+    {}
+
+    nlohmann::json toJSON() const override;
+  };
+
+  struct ExpressionAST : ASTNode
+  {
+  };
+
+  struct CallExpressionAST : ExpressionAST
+  {
+    std::shared_ptr<ExpressionAST> callee;
+    std::vector<std::shared_ptr<ExpressionAST>> arguments;
+
+    explicit CallExpressionAST(std::shared_ptr<ExpressionAST> callee)
+    : callee(std::move(callee))
+    {}
+
+    nlohmann::json toJSON() const override;
+  };
+
+  struct FunctionExpressionAST : ExpressionAST
+  {
+    std::vector<std::shared_ptr<PatternAST>> params;
+
+    nlohmann::json toJSON() const override;
+  };
+
+  struct PatternAST : ASTNode
+  {
+  };
+
+  struct IdentifierAST : ExpressionAST, PatternAST
+  {
+    std::string name;
+    
+    explicit IdentifierAST(const std::string & name)
+    : name(name)
+    {}
+
+    nlohmann::json toJSON() const override;
   };
 }
 

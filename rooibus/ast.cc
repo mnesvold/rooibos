@@ -1,30 +1,87 @@
 #include "rooibus/ast.hh"
 
-using std::ostream;
+using std::shared_ptr;
+using nlohmann::json;
+
+namespace
+{
+  template<typename C>
+  json
+  jsonify(const C & container)
+  {
+    json j = json::array();
+    for(auto & el : container)
+    {
+      j += el->toJSON();
+    }
+    return j;
+  }
+}
 
 namespace rooibus
 {
-  ostream &
-  operator << (ostream & out, const ASTNode & node)
+  json
+  ProgramAST::toJSON() const
   {
-    node.writeTo(out);
-    return out;
-  }
-
-  void
-  ProgramAST::writeTo(ostream & out) const
-  {
-    out << "{\"type\":\"Program\",\"body\":[";
+    json j;
+    j["type"] = "Program";
+    j["body"] = {};
     for(auto & stmt : body)
     {
-      stmt->writeTo(out);
+      j["body"] += stmt->toJSON();
     }
-    out << "]}";
+    return j;
   }
 
-  void
-  EmptyStatementAST::writeTo(ostream & out) const
+  json
+  EmptyStatementAST::toJSON() const
   {
-    out << "{\"type\":\"EmptyStatement\"}";
+    return { { "type", "EmptyStatement" } };
+  }
+
+  json
+  ExpressionStatementAST::toJSON() const
+  {
+    return {
+      { "type", "ExpressionStatement" },
+      { "expression", expression->toJSON() }
+    };
+  }
+
+  json
+  CallExpressionAST::toJSON() const
+  {
+    return {
+      { "type", "CallExpression" },
+      { "callee", callee->toJSON() },
+      { "arguments", jsonify(arguments) }
+    };
+  }
+
+  json
+  FunctionExpressionAST::toJSON() const
+  {
+    return {
+      { "type", "FunctionExpression" },
+      { "id", nullptr },
+      { "params", jsonify(params) },
+      { "defaults", json::array() },
+      { "rest", nullptr },
+      { "body", {
+        { "type", "BlockStatement" },
+        { "body", json::array() }
+      } },
+      { "generator", false },
+      { "expression", false }
+    };
+  }
+
+  json
+  IdentifierAST::toJSON() const
+  {
+    return {
+      { "type", "Identifier" },
+      { "name", name }
+    };
   }
 }

@@ -1,8 +1,12 @@
 include_rules
 
 ROOIBUS = $(TUP_CWD)/../rooibus/rooibus-codegen
+ESGENERATE = $(ROOT)/tools/node_modules/.bin/esgenerate
+UGLIFY = $(ROOT)/tools/node_modules/.bin/uglifyjs
 
 : source.c |> $(BIN)/clang -S -emit-llvm -o %o -O %f |> ir.ll
 : source.c |> $(BIN)/clang -c -emit-llvm -o %o -O %f |> bitcode.bc
 : bitcode.bc | $(ROOIBUS) |> $(ROOIBUS) < %f > %o |> asm.json
-: asm.json |> diff expected.js %f && touch %o |> ok
+: asm.json |> $(ESGENERATE) %f > %o |> asm.js
+: asm.js |> $(UGLIFY) %f > %o |> asm.min.js
+: asm.js |> cat %f && touch %o |> ok

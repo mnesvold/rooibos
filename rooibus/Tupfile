@@ -1,9 +1,12 @@
 include_rules
 
 CXXFLAGS += -D__STDC_LIMIT_MACROS -D__STDC_CONSTANT_MACROS
+
 CXXFLAGS += -I$(ROOT)/include
 CXXFLAGS += -I$(ROOT)/tools/include-src
 CXXFLAGS += -I$(ROOT)/tools/include-build
+CXXFLAGS += -I$(ROOT)/tools/json/src
+
 LINKDIRS += -L$(ROOT)/tools/lib
 LINKLIBS += -lpthread -ldl -lcurses
 LINKLIBS += -lLLVMBitReader -lLLVMCore -lLLVMSupport
