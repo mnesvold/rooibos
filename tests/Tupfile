@@ -4,9 +4,23 @@ ROOIBUS = $(TUP_CWD)/../rooibus/rooibus-codegen
 ESGENERATE = $(ROOT)/tools/node_modules/.bin/esgenerate
 UGLIFY = $(ROOT)/tools/node_modules/.bin/uglifyjs
 
-: source.c |> $(BIN)/clang -S -emit-llvm -o %o -O %f |> ir.ll
-: source.c |> $(BIN)/clang -c -emit-llvm -o %o -O %f |> bitcode.bc
-: bitcode.bc | $(ROOIBUS) |> $(ROOIBUS) < %f > %o |> asm.json
+# Generate unoptimized bitcode
+: source.c |> $(BIN)/clang -c -emit-llvm -o %o -O0 %f |> bitcode.bc
+
+# Use specific optimizations
+: bitcode.bc |> $(BIN)/opt -mem2reg %f > %o |> bitcode.opt.bc
+
+# Generate human-readable version (for debugging)
+: bitcode.opt.bc |> $(BIN)/llvm-dis -o %o %f |> ir.ll
+
+# Generate JavaScript AST
+: bitcode.opt.bc | $(ROOIBUS) |> $(ROOIBUS) < %f > %o |> asm.json
+
+# Generate Javascript
 : asm.json |> $(ESGENERATE) %f > %o |> asm.js
+
+# Minify (for comparison's sake)
 : asm.js |> $(UGLIFY) %f > %o |> asm.min.js
+
+# Check against expected result
 : asm.js |> diff expected.js %f && touch %o |> ok

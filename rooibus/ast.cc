@@ -40,6 +40,15 @@ namespace rooibus
   }
 
   json
+  BlockStatementAST::toJSON() const
+  {
+    return {
+      { "type", "BlockStatement" },
+      { "body", jsonify(body) }
+    };
+  }
+
+  json
   ExpressionStatementAST::toJSON() const
   {
     return {
@@ -66,10 +75,7 @@ namespace rooibus
       { "params", jsonify(params) },
       { "defaults", json::array() },
       { "rest", nullptr },
-      { "body", {
-        { "type", "BlockStatement" },
-        { "body", jsonify(body) }
-      } },
+      { "body", body->toJSON() },
       { "generator", false },
       { "expression", false }
     };
@@ -124,10 +130,7 @@ namespace rooibus
       { "params", jsonify(params) },
       { "defaults", json::array() },
       { "rest", nullptr },
-      { "body", {
-        { "type", "BlockStatement" },
-        { "body", jsonify(body) }
-      } },
+      { "body", body->toJSON() },
       { "generator", false },
       { "expression", false }
     };

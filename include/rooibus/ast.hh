@@ -36,6 +36,13 @@ namespace rooibus
     nlohmann::json toJSON() const override;
   };
 
+  struct BlockStatementAST : StatementAST
+  {
+    std::vector<std::shared_ptr<StatementAST>> body;
+
+    nlohmann::json toJSON() const override;
+  };
+
   struct ExpressionStatementAST : StatementAST
   {
     std::shared_ptr<ExpressionAST> expression;
@@ -66,11 +73,13 @@ namespace rooibus
   {
     std::shared_ptr<IdentifierAST> name;
     std::vector<std::shared_ptr<PatternAST>> params;
-    std::vector<std::shared_ptr<ExpressionAST>> body;
+    std::shared_ptr<BlockStatementAST> body;
 
     explicit FunctionDeclarationAST(std::shared_ptr<IdentifierAST> name)
     : name(name)
-    {}
+    {
+      body = std::make_shared<BlockStatementAST>();
+    }
 
     nlohmann::json toJSON() const override;
   };
@@ -137,7 +146,12 @@ namespace rooibus
   struct FunctionExpressionAST : ExpressionAST
   {
     std::vector<std::shared_ptr<PatternAST>> params;
-    std::vector<std::shared_ptr<StatementAST>> body;
+    std::shared_ptr<BlockStatementAST> body;
+
+    FunctionExpressionAST()
+    {
+      body = std::make_shared<BlockStatementAST>();
+    }
 
     nlohmann::json toJSON() const override;
   };
