@@ -1,0 +1,4 @@
+void
+ping ( void )
+{
+}

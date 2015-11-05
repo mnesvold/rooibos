@@ -5,22 +5,22 @@ ESGENERATE = $(ROOT)/tools/node_modules/.bin/esgenerate
 UGLIFY = $(ROOT)/tools/node_modules/.bin/uglifyjs
 
 # Generate unoptimized bitcode
-: source.c |> $(BIN)/clang -c -emit-llvm -o %o -O0 %f |> bitcode.bc
+: foreach *.c |> $(BIN)/clang -c -emit-llvm -o %o -O0 %f |> %B.bc {bc}
 
 # Use specific optimizations
-: bitcode.bc |> $(BIN)/opt -mem2reg %f > %o |> bitcode.opt.bc
+: foreach {bc} |> $(BIN)/opt -mem2reg %f > %o |> %B.bc-opt {bcopt}
 
 # Generate human-readable version (for debugging)
-: bitcode.opt.bc |> $(BIN)/llvm-dis -o %o %f |> ir.ll
+: foreach {bcopt} |> $(BIN)/llvm-dis -o %o %f |> %B.ll
 
 # Generate JavaScript AST
-: bitcode.opt.bc | $(ROOIBUS) |> $(ROOIBUS) < %f > %o |> asm.json
+: foreach {bcopt} | $(ROOIBUS) |> $(ROOIBUS) < %f > %o |> %B.json {ast}
 
 # Generate Javascript
-: asm.json |> $(ESGENERATE) %f > %o |> asm.js
+: foreach {ast} |> $(ESGENERATE) %f > %o |> %B.js {js}
 
 # Minify (for comparison's sake)
-: asm.js |> $(UGLIFY) %f > %o |> asm.min.js
+: foreach {js} |> $(UGLIFY) %f > %o |> %B.min.js
 
 # Check against expected result
-: asm.js |> diff expected.js %f && touch %o |> ok
+: foreach {js} |> diff %B.expected.js %f && touch %o |> %B.ok
