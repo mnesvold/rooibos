@@ -1,5 +1,5 @@
-#ifndef ROOIBUS_CODEGEN_HH
-#define ROOIBUS_CODEGEN_HH
+#ifndef ROOIBOS_CODEGEN_HH
+#define ROOIBOS_CODEGEN_HH
 
 #include <memory>
 

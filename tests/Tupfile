@@ -1,6 +1,6 @@
 include_rules
 
-ROOIBUS = $(TUP_CWD)/../rooibos/rooibos-codegen
+ROOIBOS = $(TUP_CWD)/../rooibos/rooibos-codegen
 ESGENERATE = $(ROOT)/tools/node_modules/.bin/esgenerate
 UGLIFY = $(ROOT)/tools/node_modules/.bin/uglifyjs
 
@@ -14,7 +14,7 @@ UGLIFY = $(ROOT)/tools/node_modules/.bin/uglifyjs
 : foreach {bcopt} |> ^ Pretty-printing %B test^ $(BIN)/llvm-dis -o %o %f |> %B.ll
 
 # Generate JavaScript AST
-: foreach {bcopt} | $(ROOIBUS) |> ^ AST-ifying %B test^ $(ROOIBUS) < %f > %o |> %B.json {ast}
+: foreach {bcopt} | $(ROOIBOS) |> ^ AST-ifying %B test^ $(ROOIBOS) < %f > %o |> %B.json {ast}
 
 # Generate Javascript
 : foreach {ast} |> ^ JS-ifying %B test^ $(ESGENERATE) %f > %o |> %B.js {js}
