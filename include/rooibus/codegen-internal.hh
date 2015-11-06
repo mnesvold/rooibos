@@ -13,6 +13,7 @@ namespace rooibus
 
     std::shared_ptr<IdentifierAST> forFunction(const std::string & name);
     std::shared_ptr<IdentifierAST> forFunctionExtern(const std::string & name);
+    std::shared_ptr<IdentifierAST> forParameter(const std::string & name);
   };
 
   void codegen(llvm::Function & func,

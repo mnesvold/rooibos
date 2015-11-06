@@ -3,6 +3,7 @@
 using std::make_shared;
 using std::shared_ptr;
 
+using llvm::Argument;
 using llvm::CallInst;
 using llvm::ConstantInt;
 using llvm::dyn_cast_or_null;
@@ -37,9 +38,14 @@ namespace rooibus
     Value * value = inst.getReturnValue();
     if(ConstantInt * k = dyn_cast_or_null<ConstantInt>(value))
     {
-      (void)k;
       stmt->argument = make_shared<BinaryExpressionAST>(
           make_shared<NumberLiteralAST>(k->getSExtValue()),
+          BinaryOp::BITWISE_OR,
+          make_shared<NumberLiteralAST>(0));
+    } else if(Argument * arg = dyn_cast_or_null<Argument>(value))
+    {
+      stmt->argument = make_shared<BinaryExpressionAST>(
+          _idents.forParameter(arg->getName()),
           BinaryOp::BITWISE_OR,
           make_shared<NumberLiteralAST>(0));
     }

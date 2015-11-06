@@ -23,4 +23,4 @@ UGLIFY = $(ROOT)/tools/node_modules/.bin/uglifyjs
 : foreach {js} |> $(UGLIFY) %f > %o |> %B.min.js
 
 # Check against expected result
-: foreach {js} |> diff %B.expected.js %f && touch %o |> %B.ok
+: foreach {js} |> diff --unified %B.expected.js %f && touch %o |> %B.ok

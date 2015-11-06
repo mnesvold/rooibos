@@ -38,4 +38,10 @@ namespace rooibus
   {
     return make_shared<IdentifierAST>(name);
   }
+
+  shared_ptr<IdentifierAST>
+  Identifiers::forParameter(const string & name)
+  {
+    return make_shared<IdentifierAST>("_" + name);
+  }
 }

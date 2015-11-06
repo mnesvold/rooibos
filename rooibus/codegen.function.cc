@@ -18,6 +18,17 @@ namespace rooibus
       auto externIdent = idents.forFunctionExtern(func.getName());
 
       auto impl = make_shared<FunctionDeclarationAST>(funcIdent);
+      for(auto & param : func.getArgumentList())
+      {
+        auto ident = idents.forParameter(param.getName());
+        impl->params.push_back(ident);
+        auto typeExpr = make_shared<BinaryExpressionAST>(
+            ident, BinaryOp::BITWISE_OR, make_shared<NumberLiteralAST>(0));
+        auto paramType = make_shared<AssignmentExpressionAST>(ident, typeExpr);
+        impl->body->body.push_back(
+            make_shared<ExpressionStatementAST>(paramType));
+      }
+
       InstCodegenVisitor instVisitor(idents, impl->body);
       instVisitor.visit(func);
       asmFunc->body->body.push_back(impl);
