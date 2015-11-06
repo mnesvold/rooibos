@@ -12,4 +12,4 @@ LINKLIBS += -lpthread -ldl -lcurses
 LINKLIBS += -lLLVMBitReader -lLLVMCore -lLLVMSupport
 
 : foreach *.cc |> !cxx |> {objs}
-: {objs} |> !link |> rooibus-codegen
+: {objs} |> !link |> rooibos-codegen

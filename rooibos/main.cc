@@ -9,9 +9,9 @@
 #include <llvm/Support/ManagedStatic.h>
 #include <json.hpp>
 
-#include "rooibus/ast.hh"
-#include "rooibus/ast-json.hh"
-#include "rooibus/codegen.hh"
+#include "rooibos/ast.hh"
+#include "rooibos/ast-json.hh"
+#include "rooibos/codegen.hh"
 
 int
 main ( void )
@@ -42,7 +42,7 @@ main ( void )
   std::unique_ptr<llvm::Module> module = move(*moduleOrErr);
   module->materializeAllPermanently();
 
-  auto ast = rooibus::codegen(*module);
+  auto ast = rooibos::codegen(*module);
   auto json = jsonifyAST(*ast);
   std::cout << std::setw(2) << *json << std::endl;
 

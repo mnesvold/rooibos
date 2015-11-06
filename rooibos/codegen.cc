@@ -1,4 +1,4 @@
-#include "rooibus/codegen-internal.hh"
+#include "rooibos/codegen-internal.hh"
 
 using std::forward;
 using std::make_shared;
@@ -19,7 +19,7 @@ namespace {
 
 }
 
-namespace rooibus {
+namespace rooibos {
 
   unique_ptr<ProgramAST>
   codegen(Module & module)

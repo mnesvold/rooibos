@@ -1,4 +1,4 @@
-#include "rooibus/codegen-internal.hh"
+#include "rooibos/codegen-internal.hh"
 
 using std::make_shared;
 using std::shared_ptr;
@@ -8,7 +8,7 @@ using llvm::ConstantInt;
 using llvm::dyn_cast;
 using llvm::Value;
 
-namespace rooibus
+namespace rooibos
 {
   namespace
   {

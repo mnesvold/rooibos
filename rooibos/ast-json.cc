@@ -1,4 +1,4 @@
-#include "rooibus/ast-json.hh"
+#include "rooibos/ast-json.hh"
 
 using std::enable_if;
 using std::is_convertible;
@@ -9,7 +9,7 @@ using std::vector;
 
 using nlohmann::json;
 
-namespace rooibus
+namespace rooibos
 {
   namespace
   {

@@ -1,4 +1,4 @@
-#include "rooibus/codegen-internal.hh"
+#include "rooibos/codegen-internal.hh"
 
 using std::make_shared;
 using std::shared_ptr;
@@ -6,14 +6,14 @@ using std::string;
 
 namespace
 {
-  shared_ptr<rooibus::IdentifierAST>
+  shared_ptr<rooibos::IdentifierAST>
   mkid(const std::string & name)
   {
-    return make_shared<rooibus::IdentifierAST>(name);
+    return make_shared<rooibos::IdentifierAST>(name);
   }
 }
 
-namespace rooibus
+namespace rooibos
 {
   Identifiers::Identifiers()
   : adaptors(mkid("adaptors")),

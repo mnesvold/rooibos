@@ -1,6 +1,6 @@
 include_rules
 
-ROOIBUS = $(TUP_CWD)/../rooibus/rooibus-codegen
+ROOIBUS = $(TUP_CWD)/../rooibos/rooibos-codegen
 ESGENERATE = $(ROOT)/tools/node_modules/.bin/esgenerate
 UGLIFY = $(ROOT)/tools/node_modules/.bin/uglifyjs
 

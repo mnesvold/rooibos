@@ -1,8 +1,8 @@
-#include "rooibus/codegen.hh"
+#include "rooibos/codegen.hh"
 
 #include <llvm/IR/InstVisitor.h>
 
-namespace rooibus
+namespace rooibos
 {
   struct Identifiers
   {

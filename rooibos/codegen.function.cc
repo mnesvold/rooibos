@@ -1,11 +1,11 @@
-#include "rooibus/codegen-internal.hh"
+#include "rooibos/codegen-internal.hh"
 
 using std::make_shared;
 using std::shared_ptr;
 
 using llvm::Function;
 
-namespace rooibus
+namespace rooibos
 {
   void
   codegen(Function & func,

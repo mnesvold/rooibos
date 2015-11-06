@@ -1,4 +1,4 @@
-#include "rooibus/codegen-internal.hh"
+#include "rooibos/codegen-internal.hh"
 
 using std::make_shared;
 using std::shared_ptr;
@@ -11,7 +11,7 @@ using llvm::Instruction;
 using llvm::ReturnInst;
 using llvm::Value;
 
-namespace rooibus
+namespace rooibos
 {
   void
   InstCodegenVisitor::visitCallInst(CallInst & inst)

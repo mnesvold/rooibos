@@ -4,7 +4,7 @@
 #include <memory>
 #include <vector>
 
-namespace rooibus
+namespace rooibos
 {
   struct AssignmentExpressionAST;
   struct BinaryExpressionAST;
@@ -328,7 +328,7 @@ namespace rooibus
   struct IdentifierAST : ExpressionAST
   {
     std::string name;
-    
+
     explicit IdentifierAST(const std::string & name)
     : name(name)
     {}

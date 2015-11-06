@@ -5,9 +5,9 @@
 
 #include <llvm/IR/Module.h>
 
-#include "rooibus/ast.hh"
+#include "rooibos/ast.hh"
 
-namespace rooibus
+namespace rooibos
 {
   std::unique_ptr<ProgramAST> codegen(llvm::Module & module);
 }
