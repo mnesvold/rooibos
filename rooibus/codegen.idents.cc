@@ -30,7 +30,7 @@ namespace rooibus
   shared_ptr<IdentifierAST>
   Identifiers::forFunction(const string & name)
   {
-    return make_shared<IdentifierAST>("_" + name);
+    return make_shared<IdentifierAST>("f_" + name);
   }
 
   shared_ptr<IdentifierAST>
@@ -42,6 +42,6 @@ namespace rooibus
   shared_ptr<IdentifierAST>
   Identifiers::forParameter(const string & name)
   {
-    return make_shared<IdentifierAST>("_" + name);
+    return make_shared<IdentifierAST>("p_" + name);
   }
 }
