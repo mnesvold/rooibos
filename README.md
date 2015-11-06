@@ -39,7 +39,7 @@ $ $TOOLS/node_modules/.bin/esgenerate foo.ast > foo.js
 
 ## Using the results
 
-The produced ASM.JS function is itself wrapped in a non-ASM.JS adaptor, which is responsible for setting up the heap, bridging native JavaScript and ASM.JS types, and so on. Currently, all functions defined in the IR are exposed through the addaptor which is attached to the global variable (`window` in browsers) under the name `ASM`. For instance, a source file
+The produced ASM.JS function is itself wrapped in a non-ASM.JS adaptor, which is responsible for setting up the heap, bridging native JavaScript and ASM.JS types, and so on. Currently, all functions defined in the IR are exposed through the adaptor which is attached to the global variable (`window` in browsers) under the name `ASM`. For instance, a source file
 
 ```c
 int echo(int value)
