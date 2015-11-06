@@ -36,18 +36,9 @@ namespace rooibus
   {
     auto stmt = make_shared<ReturnStatementAST>();
     Value * value = inst.getReturnValue();
-    if(ConstantInt * k = dyn_cast_or_null<ConstantInt>(value))
+    if(value)
     {
-      stmt->argument = make_shared<BinaryExpressionAST>(
-          make_shared<NumberLiteralAST>(k->getSExtValue()),
-          BinaryOp::BITWISE_OR,
-          make_shared<NumberLiteralAST>(0));
-    } else if(Argument * arg = dyn_cast_or_null<Argument>(value))
-    {
-      stmt->argument = make_shared<BinaryExpressionAST>(
-          _idents.forParameter(arg->getName()),
-          BinaryOp::BITWISE_OR,
-          make_shared<NumberLiteralAST>(0));
+      stmt->argument = codegen(_idents, value);
     }
     _impl->body.push_back(stmt);
   }

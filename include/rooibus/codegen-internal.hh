@@ -22,6 +22,8 @@ namespace rooibus
                std::shared_ptr<ObjectExpressionAST> asmRet,
                std::shared_ptr<ObjectExpressionAST> adaptors);
 
+  std::shared_ptr<ExpressionAST> codegen(Identifiers &, llvm::Value *);
+
   class InstCodegenVisitor : public llvm::InstVisitor<InstCodegenVisitor>
   {
   public:
