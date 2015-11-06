@@ -6,9 +6,9 @@ CXXFLAGS = @(CXXFLAGS)
 CXXFLAGS += -fcolor-diagnostics
 CXXFLAGS += -Wall -Werror -pedantic
 CXXFLAGS += -std=c++11
-!cxx = |> $(CXX) -c -o %o $(CXXFLAGS) %f |> %f.o
+!cxx = |> ^ Compiling C++ object %B^ $(CXX) -c -o %o $(CXXFLAGS) %f |> %f.o
 
 LINK = $(CXX)
 LINKDIRS =
 LINKLIBS =
-!link = |> $(LINK) -o %o $(LINKDIRS) %f $(LINKLIBS) |>
+!link = |> ^ Linking %o^ $(LINK) -o %o $(LINKDIRS) %f $(LINKLIBS) |>
