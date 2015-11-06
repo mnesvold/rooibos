@@ -16,8 +16,6 @@
 int
 main ( void )
 {
-  std::clog << "Rooibus Code Generator" << std::endl;
-
   llvm::LLVMContext & context = llvm::getGlobalContext();
   llvm::llvm_shutdown_obj shutdown;
 
