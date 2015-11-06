@@ -10,6 +10,7 @@
 #include <json.hpp>
 
 #include "rooibus/ast.hh"
+#include "rooibus/ast-json.hh"
 #include "rooibus/codegen.hh"
 
 int
@@ -44,8 +45,8 @@ main ( void )
   module->materializeAllPermanently();
 
   auto ast = rooibus::codegen(*module);
-  auto json = ast->toJSON();
-  std::cout << json << std::endl;
+  auto json = jsonifyAST(*ast);
+  std::cout << std::setw(2) << *json << std::endl;
 
   return 0;
 }

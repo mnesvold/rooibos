@@ -4,43 +4,102 @@
 #include <memory>
 #include <vector>
 
-#include <json.hpp>
-
 namespace rooibus
 {
+  struct AssignmentExpressionAST;
+  struct BlockStatementAST;
+  struct CallExpressionAST;
+  struct EmptyStatementAST;
   struct ExpressionAST;
+  struct ExpressionStatementAST;
+  struct FunctionDeclarationAST;
+  struct FunctionExpressionAST;
   struct IdentifierAST;
+  struct LiteralAST;
+  struct MemberExpressionAST;
+  struct ObjectExpressionAST;
   struct PatternAST;
   struct PropertyAST;
+  struct ReturnStatementAST;
   struct StatementAST;
+  struct VariableDeclarationAST;
   struct VariableDeclaratorAST;
+
+  class ExpressionVisitor
+  {
+  public:
+    ~ExpressionVisitor() {};
+
+    virtual void visit(const AssignmentExpressionAST &) = 0;
+    virtual void visit(const CallExpressionAST &) = 0;
+    virtual void visit(const FunctionExpressionAST &) = 0;
+    virtual void visit(const IdentifierAST &) = 0;
+    virtual void visit(const LiteralAST &) = 0;
+    virtual void visit(const MemberExpressionAST &) = 0;
+    virtual void visit(const ObjectExpressionAST &) = 0;
+  };
+
+  class PatternVisitor : public ExpressionVisitor
+  {
+  public:
+    using ExpressionVisitor::visit;
+
+    ~PatternVisitor() {};
+  };
+
+  class DeclarationVisitor
+  {
+  public:
+    ~DeclarationVisitor() {};
+
+    virtual void visit(const FunctionDeclarationAST &) = 0;
+    virtual void visit(const VariableDeclarationAST &) = 0;
+  };
+
+  class StatementVisitor : public DeclarationVisitor
+  {
+  public:
+    using DeclarationVisitor::visit;
+
+    ~StatementVisitor() {};
+
+    virtual void visit(const BlockStatementAST &) = 0;
+    virtual void visit(const EmptyStatementAST &) = 0;
+    virtual void visit(const ExpressionStatementAST &) = 0;
+    virtual void visit(const ReturnStatementAST &) = 0;
+  };
 
   struct ASTNode
   {
     virtual ~ASTNode() {}
-    virtual nlohmann::json toJSON() const = 0;
   };
 
   struct ProgramAST : ASTNode
   {
     std::vector<std::shared_ptr<StatementAST>> body;
-    nlohmann::json toJSON() const override;
   };
 
   struct StatementAST : ASTNode
   {
+    virtual void accept(StatementVisitor &) const = 0;
   };
 
   struct EmptyStatementAST : StatementAST
   {
-    nlohmann::json toJSON() const override;
+    void accept(StatementVisitor & visitor) const override
+    {
+      visitor.visit(*this);
+    }
   };
 
   struct BlockStatementAST : StatementAST
   {
     std::vector<std::shared_ptr<StatementAST>> body;
 
-    nlohmann::json toJSON() const override;
+    void accept(StatementVisitor & visitor) const override
+    {
+      visitor.visit(*this);
+    }
   };
 
   struct ExpressionStatementAST : StatementAST
@@ -48,10 +107,13 @@ namespace rooibus
     std::shared_ptr<ExpressionAST> expression;
 
     explicit ExpressionStatementAST(std::shared_ptr<ExpressionAST> expr)
-    : expression(std::move(expr))
+    : expression(expr)
     {}
 
-    nlohmann::json toJSON() const override;
+    void accept(StatementVisitor & visitor) const override
+    {
+      visitor.visit(*this);
+    }
   };
 
   struct ReturnStatementAST : StatementAST
@@ -62,11 +124,20 @@ namespace rooibus
     : argument(arg)
     {}
 
-    nlohmann::json toJSON() const override;
+    void accept(StatementVisitor & visitor) const override
+    {
+      visitor.visit(*this);
+    }
   };
 
   struct DeclarationAST : StatementAST
   {
+    void accept(StatementVisitor & visitor) const override
+    {
+      accept((DeclarationVisitor &)visitor);
+    }
+
+    virtual void accept(DeclarationVisitor &) const = 0;
   };
 
   struct FunctionDeclarationAST : DeclarationAST
@@ -81,7 +152,10 @@ namespace rooibus
       body = std::make_shared<BlockStatementAST>();
     }
 
-    nlohmann::json toJSON() const override;
+    void accept(DeclarationVisitor & visitor) const override
+    {
+      visitor.visit(*this);
+    }
   };
 
   struct VariableDeclarationAST : DeclarationAST
@@ -98,7 +172,10 @@ namespace rooibus
       decls.push_back(std::make_shared<VariableDeclaratorAST>(id, init));
     }
 
-    nlohmann::json toJSON() const override;
+    void accept(DeclarationVisitor & visitor) const override
+    {
+      visitor.visit(*this);
+    }
   };
 
   struct VariableDeclaratorAST : ASTNode
@@ -111,23 +188,31 @@ namespace rooibus
                           std::shared_ptr<ExpressionAST> init = nullptr)
     : id(id), init(init)
     {}
-
-    nlohmann::json toJSON() const override;
   };
 
   struct PatternAST : ASTNode
   {
+    virtual void accept(PatternVisitor & visitor) const = 0;
   };
 
   struct ExpressionAST : PatternAST
   {
+    void accept(PatternVisitor & visitor) const override
+    {
+      return accept((ExpressionVisitor &)visitor);
+    }
+
+    virtual void accept(ExpressionVisitor & visitor) const = 0;
   };
 
   struct ObjectExpressionAST : ExpressionAST
   {
     std::vector<std::shared_ptr<PropertyAST>> props;
 
-    nlohmann::json toJSON() const override;
+    void accept(ExpressionVisitor & visitor) const override
+    {
+      visitor.visit(*this);
+    }
   };
 
   struct PropertyAST : ASTNode
@@ -139,8 +224,6 @@ namespace rooibus
                 std::shared_ptr<ExpressionAST> value)
     : key(key), value(value)
     {}
-
-    nlohmann::json toJSON() const override;
   };
 
   struct FunctionExpressionAST : ExpressionAST
@@ -153,7 +236,10 @@ namespace rooibus
       body = std::make_shared<BlockStatementAST>();
     }
 
-    nlohmann::json toJSON() const override;
+    void accept(ExpressionVisitor & visitor) const override
+    {
+      visitor.visit(*this);
+    }
   };
 
   struct AssignmentExpressionAST : ExpressionAST
@@ -166,7 +252,10 @@ namespace rooibus
     : lhs(lhs), rhs(rhs)
     {}
 
-    nlohmann::json toJSON() const override;
+    void accept(ExpressionVisitor & visitor) const override
+    {
+      visitor.visit(*this);
+    }
   };
 
   struct CallExpressionAST : ExpressionAST
@@ -178,7 +267,10 @@ namespace rooibus
     : callee(std::move(callee))
     {}
 
-    nlohmann::json toJSON() const override;
+    void accept(ExpressionVisitor & visitor) const override
+    {
+      visitor.visit(*this);
+    }
   };
 
   struct MemberExpressionAST : ExpressionAST
@@ -191,7 +283,10 @@ namespace rooibus
     : object(object), property(property)
     {}
 
-    nlohmann::json toJSON() const override;
+    void accept(ExpressionVisitor & visitor) const override
+    {
+      visitor.visit(*this);
+    }
   };
 
   struct IdentifierAST : ExpressionAST
@@ -202,17 +297,22 @@ namespace rooibus
     : name(name)
     {}
 
-    nlohmann::json toJSON() const override;
+    void accept(ExpressionVisitor & visitor) const override
+    {
+      visitor.visit(*this);
+    }
   };
 
   struct LiteralAST : ExpressionAST
   {
+    std::string value;
+
     explicit LiteralAST(const std::string & value) : value(value) {}
 
-    nlohmann::json toJSON() const override;
-
-  private:
-    nlohmann::json value;
+    void accept(ExpressionVisitor & visitor) const override
+    {
+      visitor.visit(*this);
+    }
   };
 }
 
