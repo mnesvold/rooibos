@@ -7,6 +7,7 @@
 namespace rooibus
 {
   struct AssignmentExpressionAST;
+  struct BinaryExpressionAST;
   struct BlockStatementAST;
   struct CallExpressionAST;
   struct EmptyStatementAST;
@@ -15,26 +16,38 @@ namespace rooibus
   struct FunctionDeclarationAST;
   struct FunctionExpressionAST;
   struct IdentifierAST;
-  struct LiteralAST;
   struct MemberExpressionAST;
+  struct NumberLiteralAST;
   struct ObjectExpressionAST;
   struct PatternAST;
   struct PropertyAST;
   struct ReturnStatementAST;
   struct StatementAST;
+  struct StringLiteralAST;
   struct VariableDeclarationAST;
   struct VariableDeclaratorAST;
 
-  class ExpressionVisitor
+  class LiteralVisitor
   {
   public:
+    ~LiteralVisitor() {};
+
+    virtual void visit(const NumberLiteralAST &) = 0;
+    virtual void visit(const StringLiteralAST &) = 0;
+  };
+
+  class ExpressionVisitor : LiteralVisitor
+  {
+  public:
+    using LiteralVisitor::visit;
+
     ~ExpressionVisitor() {};
 
     virtual void visit(const AssignmentExpressionAST &) = 0;
+    virtual void visit(const BinaryExpressionAST &) = 0;
     virtual void visit(const CallExpressionAST &) = 0;
     virtual void visit(const FunctionExpressionAST &) = 0;
     virtual void visit(const IdentifierAST &) = 0;
-    virtual void visit(const LiteralAST &) = 0;
     virtual void visit(const MemberExpressionAST &) = 0;
     virtual void visit(const ObjectExpressionAST &) = 0;
   };
@@ -242,6 +255,29 @@ namespace rooibus
     }
   };
 
+  namespace BinaryOp
+  {
+    static const std::string BITWISE_OR = "|";
+  }
+
+  struct BinaryExpressionAST : ExpressionAST
+  {
+    std::shared_ptr<ExpressionAST> lhs;
+    std::string op;
+    std::shared_ptr<ExpressionAST> rhs;
+
+    BinaryExpressionAST(std::shared_ptr<ExpressionAST> lhs,
+                        const std::string & op,
+                        std::shared_ptr<ExpressionAST> rhs)
+    : lhs(lhs), op(op), rhs(rhs)
+    {}
+
+    void accept(ExpressionVisitor & visitor) const override
+    {
+      visitor.visit(*this);
+    }
+  };
+
   struct AssignmentExpressionAST : ExpressionAST
   {
     std::shared_ptr<PatternAST> lhs;
@@ -305,11 +341,35 @@ namespace rooibus
 
   struct LiteralAST : ExpressionAST
   {
-    std::string value;
-
-    explicit LiteralAST(const std::string & value) : value(value) {}
+    using ExpressionAST::accept;
 
     void accept(ExpressionVisitor & visitor) const override
+    {
+      accept((LiteralVisitor &)visitor);
+    }
+
+    virtual void accept(LiteralVisitor & visitor) const = 0;
+  };
+
+  struct NumberLiteralAST : LiteralAST
+  {
+    long value;
+
+    explicit NumberLiteralAST(long value) : value(value) {}
+
+    void accept(LiteralVisitor & visitor) const
+    {
+      visitor.visit(*this);
+    }
+  };
+
+  struct StringLiteralAST : LiteralAST
+  {
+    std::string value;
+
+    explicit StringLiteralAST(const std::string & value) : value(value) {}
+
+    void accept(LiteralVisitor & visitor) const
     {
       visitor.visit(*this);
     }

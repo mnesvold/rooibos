@@ -18,11 +18,13 @@ namespace rooibus
     public:
       ExpressionJSONifier(json & j) : j(j) {}
 
+      void visit(const NumberLiteralAST & ast) override;
+      void visit(const StringLiteralAST & ast) override;
       void visit(const AssignmentExpressionAST & ast) override;
+      void visit(const BinaryExpressionAST &) override;
       void visit(const CallExpressionAST & ast) override;
       void visit(const FunctionExpressionAST & ast) override;
       void visit(const IdentifierAST & ast) override;
-      void visit(const LiteralAST & ast) override;
       void visit(const MemberExpressionAST & ast) override;
       void visit(const ObjectExpressionAST & ast) override;
 
@@ -101,6 +103,32 @@ namespace rooibus
       _recurse<E,StatementJSONifier>(j, key, ast);
     }
 
+    void ExpressionJSONifier::visit(const NumberLiteralAST & ast)
+    {
+      j = {
+        { "type", "Literal" },
+        { "value", ast.value }
+      };
+    }
+
+    void ExpressionJSONifier::visit(const StringLiteralAST & ast)
+    {
+      j = {
+        { "type", "Literal" },
+        { "value", ast.value }
+      };
+    }
+
+    void ExpressionJSONifier::visit(const BinaryExpressionAST & ast)
+    {
+      j = {
+        { "type", "BinaryExpression" },
+        { "operator", ast.op }
+      };
+      recurse(j, "left", ast.lhs);
+      recurse(j, "right", ast.rhs);
+    }
+
     void ExpressionJSONifier::visit(const AssignmentExpressionAST & ast)
     {
       j = {
@@ -139,14 +167,6 @@ namespace rooibus
       j = {
         { "type", "Identifier" },
         { "name", ast.name }
-      };
-    }
-
-    void ExpressionJSONifier::visit(const LiteralAST & ast)
-    {
-      j = {
-        { "type", "Literal" },
-        { "value", ast.value }
       };
     }
 

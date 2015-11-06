@@ -39,7 +39,7 @@ namespace rooibus {
     asmFunc->params.push_back(idents.ffi);
     asmFunc->params.push_back(idents.heap);
     asmFunc->body->body.push_back(make_shared<ExpressionStatementAST>(
-          make_shared<LiteralAST>("use asm")));
+          make_shared<StringLiteralAST>("use asm")));
     auto asmRetVal = make_shared<ObjectExpressionAST>();
     iifeFunc->body->body.push_back(make_shared<VariableDeclarationAST>(
          idents.ASM, asmFunc));
