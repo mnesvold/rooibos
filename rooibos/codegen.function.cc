@@ -18,20 +18,22 @@ namespace rooibos
       auto externIdent = idents.forFunctionExtern(func.getName());
 
       auto impl = make_shared<FunctionDeclarationAST>(funcIdent);
+
+      InstCodegenVisitor instVisitor(idents, impl->body);
+      instVisitor.visit(func);
+
+      auto paramIt = impl->body->body.begin();
       for(auto & param : func.getArgumentList())
       {
         auto ident = idents.forParameter(param.getName());
         impl->params.push_back(ident);
         auto typeExpr = codegen(idents, &param);
         auto paramType = make_shared<AssignmentExpressionAST>(ident, typeExpr);
-        impl->body->body.push_back(
+        impl->body->body.insert(paramIt,
             make_shared<ExpressionStatementAST>(paramType));
       }
 
-      InstCodegenVisitor instVisitor(idents, impl->body);
-      instVisitor.visit(func);
       asmFunc->body->body.push_back(impl);
-
       asmRet->props.push_back(make_shared<PropertyAST>(funcIdent, funcIdent));
 
       adaptors->props.push_back(make_shared<PropertyAST>(

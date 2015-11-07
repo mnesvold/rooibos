@@ -19,8 +19,14 @@ namespace rooibos
     auto callee = inst.getCalledFunction();
     auto calleeName = callee->getName();
     auto calleeIdent = _idents.forFunction(calleeName);
+    auto call = make_shared<CallExpressionAST>(calleeIdent);
 
-    _emit(inst, make_shared<CallExpressionAST>(calleeIdent));
+    for(auto & arg : inst.arg_operands())
+    {
+      call->arguments.push_back(codegen(_idents, arg));
+    }
+
+    _emit(inst, call);
   }
 
   void
