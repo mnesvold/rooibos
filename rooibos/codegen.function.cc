@@ -2,6 +2,7 @@
 
 using std::make_shared;
 using std::shared_ptr;
+using std::vector;
 
 using llvm::Function;
 
@@ -19,19 +20,23 @@ namespace rooibos
 
       auto impl = make_shared<FunctionDeclarationAST>(funcIdent);
 
-      InstCodegenVisitor instVisitor(idents, impl->body);
-      instVisitor.visit(func);
-
-      auto paramIt = impl->body->body.begin();
+      vector<shared_ptr<StatementAST>> paramCoercions;
       for(auto & param : func.getArgumentList())
       {
         auto ident = idents.forParameter(param.getName());
         impl->params.push_back(ident);
         auto typeExpr = codegen(idents, &param);
         auto paramType = make_shared<AssignmentExpressionAST>(ident, typeExpr);
-        impl->body->body.insert(paramIt,
-            make_shared<ExpressionStatementAST>(paramType));
+        paramCoercions.push_back(make_shared<ExpressionStatementAST>(paramType));
       }
+
+      vector<shared_ptr<StatementAST>> stmts;
+      InstCodegenVisitor instVisitor(idents, stmts);
+      instVisitor.visit(func);
+
+      auto & body = impl->body->body;
+      body.insert(body.end(), paramCoercions.begin(), paramCoercions.end());
+      body.insert(body.end(), stmts.begin(), stmts.end());
 
       asmFunc->body->body.push_back(impl);
       asmRet->props.push_back(make_shared<PropertyAST>(funcIdent, funcIdent));

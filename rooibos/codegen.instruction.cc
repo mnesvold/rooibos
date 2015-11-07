@@ -32,7 +32,7 @@ namespace rooibos
   void
   InstCodegenVisitor::visitInstruction(Instruction & inst)
   {
-    _impl->body.push_back(make_shared<ExpressionStatementAST>(
+    _stmts.push_back(make_shared<ExpressionStatementAST>(
           make_shared<StringLiteralAST>(inst.getOpcodeName())));
   }
 
@@ -45,7 +45,7 @@ namespace rooibos
     {
       stmt->argument = codegen(_idents, value);
     }
-    _impl->body.push_back(stmt);
+    _stmts.push_back(stmt);
   }
 
   void
@@ -57,7 +57,7 @@ namespace rooibos
       stmtExpr = _assign(inst, coerce(inst.getType(), expr));
     }
     auto stmt = make_shared<ExpressionStatementAST>(stmtExpr);
-    _impl->body.push_back(stmt);
+    _stmts.push_back(stmt);
   }
 
   shared_ptr<ExpressionAST>
@@ -67,7 +67,7 @@ namespace rooibos
     auto ident = _idents.forInstruction(inst);
     auto decl = make_shared<VariableDeclarationAST>(
         ident, codegenDefaultValue(inst.getType()));
-    _impl->body.insert(_impl->body.begin(), decl);
+    _stmts.insert(_stmts.begin(), decl);
     return make_shared<AssignmentExpressionAST>(ident, expr);
   }
 }

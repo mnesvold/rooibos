@@ -41,8 +41,8 @@ namespace rooibos
   {
   public:
     InstCodegenVisitor(Identifiers & idents,
-                       std::shared_ptr<BlockStatementAST> impl)
-    : _idents(idents), _impl(impl)
+                       std::vector<std::shared_ptr<StatementAST>> & stmts)
+    : _idents(idents), _stmts(stmts)
     {}
 
     void visitCallInst(llvm::CallInst &);
@@ -51,7 +51,7 @@ namespace rooibos
 
   private:
     Identifiers & _idents;
-    std::shared_ptr<BlockStatementAST> _impl;
+    std::vector<std::shared_ptr<StatementAST>> & _stmts;
 
     void _emit(llvm::Instruction &, std::shared_ptr<ExpressionAST>);
     std::shared_ptr<ExpressionAST>
