@@ -4,6 +4,9 @@ using std::make_shared;
 using std::shared_ptr;
 using std::string;
 
+using llvm::Instruction;
+using llvm::Twine;
+
 namespace
 {
   shared_ptr<rooibos::IdentifierAST>
@@ -37,6 +40,23 @@ namespace rooibos
   Identifiers::forFunctionExtern(const string & name)
   {
     return make_shared<IdentifierAST>(name);
+  }
+
+  shared_ptr<IdentifierAST>
+  Identifiers::forInstruction(const Instruction & inst)
+  {
+    unsigned int id;
+    if(_instIDMap.count(&inst))
+    {
+      id = _instIDMap[&inst];
+    }
+      else
+    {
+      id = _nextInstID++;
+      _instIDMap[&inst] = id;
+    }
+    auto ident = ("l_" + Twine(id)).str();
+    return make_shared<IdentifierAST>(ident);
   }
 
   shared_ptr<IdentifierAST>

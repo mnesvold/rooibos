@@ -20,8 +20,7 @@ namespace rooibos
     auto calleeName = callee->getName();
     auto calleeIdent = _idents.forFunction(calleeName);
 
-    _impl->body.push_back(make_shared<ExpressionStatementAST>(
-          make_shared<CallExpressionAST>(calleeIdent)));
+    _emit(inst, make_shared<CallExpressionAST>(calleeIdent));
   }
 
   void
@@ -41,5 +40,28 @@ namespace rooibos
       stmt->argument = codegen(_idents, value);
     }
     _impl->body.push_back(stmt);
+  }
+
+  void
+  InstCodegenVisitor::_emit(Instruction & inst, shared_ptr<ExpressionAST> expr)
+  {
+    auto stmtExpr = expr;
+    if(inst.hasNUsesOrMore(1))
+    {
+      stmtExpr = _assign(inst, coerce(inst.getType(), expr));
+    }
+    auto stmt = make_shared<ExpressionStatementAST>(stmtExpr);
+    _impl->body.push_back(stmt);
+  }
+
+  shared_ptr<ExpressionAST>
+  InstCodegenVisitor::_assign(Instruction & inst,
+                              shared_ptr<ExpressionAST> expr)
+  {
+    auto ident = _idents.forInstruction(inst);
+    auto decl = make_shared<VariableDeclarationAST>(
+        ident, codegenDefaultValue(inst.getType()));
+    _impl->body.insert(_impl->body.begin(), decl);
+    return make_shared<AssignmentExpressionAST>(ident, expr);
   }
 }
