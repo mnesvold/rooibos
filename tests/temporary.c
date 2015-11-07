@@ -5,13 +5,7 @@ get_int ( void )
 }
 
 int
-echo ( int n )
-{
-  return n;
-}
-
-int
 return_int ( void )
 {
-  return echo(get_int());
+  return get_int();
 }

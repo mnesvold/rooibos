@@ -41,8 +41,9 @@ namespace rooibos
   {
   public:
     InstCodegenVisitor(Identifiers & idents,
-                       std::vector<std::shared_ptr<StatementAST>> & stmts)
-    : _idents(idents), _stmts(stmts)
+        std::vector<std::shared_ptr<VariableDeclaratorAST>> & vars,
+        std::vector<std::shared_ptr<StatementAST>> & stmts)
+    : _idents(idents), _vars(vars), _stmts(stmts)
     {}
 
     void visitCallInst(llvm::CallInst &);
@@ -51,6 +52,7 @@ namespace rooibos
 
   private:
     Identifiers & _idents;
+    std::vector<std::shared_ptr<VariableDeclaratorAST>> & _vars;
     std::vector<std::shared_ptr<StatementAST>> & _stmts;
 
     void _emit(llvm::Instruction &, std::shared_ptr<ExpressionAST>);

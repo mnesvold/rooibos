@@ -65,9 +65,8 @@ namespace rooibos
                               shared_ptr<ExpressionAST> expr)
   {
     auto ident = _idents.forInstruction(inst);
-    auto decl = make_shared<VariableDeclarationAST>(
-        ident, codegenDefaultValue(inst.getType()));
-    _stmts.insert(_stmts.begin(), decl);
+    _vars.push_back(make_shared<VariableDeclaratorAST>(
+          ident, codegenDefaultValue(inst.getType())));
     return make_shared<AssignmentExpressionAST>(ident, expr);
   }
 }

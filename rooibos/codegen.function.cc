@@ -30,9 +30,17 @@ namespace rooibos
         paramCoercions.push_back(make_shared<ExpressionStatementAST>(paramType));
       }
 
+      vector<shared_ptr<VariableDeclaratorAST>> vars;
       vector<shared_ptr<StatementAST>> stmts;
-      InstCodegenVisitor instVisitor(idents, stmts);
+      InstCodegenVisitor instVisitor(idents, vars, stmts);
       instVisitor.visit(func);
+
+      if(!vars.empty())
+      {
+        auto decl = make_shared<VariableDeclarationAST>();
+        decl->decls.insert(decl->decls.begin(), vars.begin(), vars.end());
+        stmts.insert(stmts.begin(), decl);
+      }
 
       auto & body = impl->body->body;
       body.insert(body.end(), paramCoercions.begin(), paramCoercions.end());
