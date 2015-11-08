@@ -1,7 +1,9 @@
 #include "rooibos/codegen-internal.hh"
 
 using std::make_shared;
+using std::set;
 using std::shared_ptr;
+using std::string;
 using std::vector;
 
 using llvm::Function;
@@ -11,10 +13,15 @@ namespace rooibos
   void
   codegen(Function & func,
           Identifiers & idents,
-          shared_ptr<FunctionExpressionAST> asmFunc,
+          set<string> & stdlib,
+          vector<shared_ptr<StatementAST>> & impls,
           shared_ptr<ObjectExpressionAST> asmRet,
           shared_ptr<ObjectExpressionAST> adaptors)
   {
+      if(func.isDeclaration())
+      {
+        return;
+      }
       auto funcIdent = idents.forFunction(func.getName());
       auto externIdent = idents.forFunctionExtern(func.getName());
 
@@ -32,7 +39,7 @@ namespace rooibos
 
       vector<shared_ptr<VariableDeclaratorAST>> vars;
       vector<shared_ptr<StatementAST>> stmts;
-      InstCodegenVisitor instVisitor(idents, vars, stmts);
+      InstCodegenVisitor instVisitor(idents, stdlib, vars, stmts);
       instVisitor.visit(func);
 
       if(!vars.empty())
@@ -46,9 +53,8 @@ namespace rooibos
       body.insert(body.end(), paramCoercions.begin(), paramCoercions.end());
       body.insert(body.end(), stmts.begin(), stmts.end());
 
-      asmFunc->body->body.push_back(impl);
+      impls.push_back(impl);
       asmRet->props.push_back(make_shared<PropertyAST>(funcIdent, funcIdent));
-
       adaptors->props.push_back(make_shared<PropertyAST>(
             externIdent,
             make_shared<MemberExpressionAST>(idents.asm_, funcIdent)));

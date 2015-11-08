@@ -1,7 +1,11 @@
 #include "rooibos/codegen-internal.hh"
 
+#include <algorithm>
+
+using std::equal;
 using std::make_shared;
 using std::shared_ptr;
+using std::string;
 
 using llvm::Argument;
 using llvm::CallInst;
@@ -13,12 +17,42 @@ using llvm::Value;
 
 namespace rooibos
 {
+  namespace
+  {
+    bool
+    startsWith(const std::string & string, const std::string & prefix)
+    {
+      return equal(prefix.begin(), prefix.end(), string.begin());
+    }
+
+    bool
+    isStdlibCall(std::string & name)
+    {
+      string prefix = "__rooibos_stdlib_";
+      if(!startsWith(name, prefix))
+      {
+        return false;
+      }
+      name = name.substr(prefix.length());
+      return true;
+    }
+  }
+
   void
   InstCodegenVisitor::visitCallInst(CallInst & inst)
   {
     auto callee = inst.getCalledFunction();
-    auto calleeName = callee->getName();
-    auto calleeIdent = _idents.forFunction(calleeName);
+    string calleeName = callee->getName();
+    shared_ptr<IdentifierAST> calleeIdent;
+    if(isStdlibCall(calleeName))
+    {
+      _stdlib.insert(calleeName);
+      calleeIdent = _idents.forStdlibFunc(calleeName);
+    }
+      else
+    {
+      calleeIdent = _idents.forFunction(calleeName);
+    }
     auto call = make_shared<CallExpressionAST>(calleeIdent);
 
     for(auto & arg : inst.arg_operands())

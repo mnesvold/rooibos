@@ -64,4 +64,10 @@ namespace rooibos
   {
     return make_shared<IdentifierAST>("p_" + name);
   }
+
+  shared_ptr<IdentifierAST>
+  Identifiers::forStdlibFunc(const string & name)
+  {
+    return make_shared<IdentifierAST>("stdlib_" + name);
+  }
 }

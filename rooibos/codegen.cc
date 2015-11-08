@@ -3,18 +3,44 @@
 using std::forward;
 using std::make_shared;
 using std::move;
+using std::set;
 using std::shared_ptr;
 using std::string;
 using std::unique_ptr;
+using std::vector;
 
 using llvm::Module;
 
 namespace {
+  using namespace rooibos;
 
   template<class T, class... Args>
   unique_ptr<T> make_unique(Args&&... args)
   {
     return unique_ptr<T>(new T(forward<Args>(args)...));
+  }
+
+  vector<shared_ptr<StatementAST>>
+  generateStdlibImports(Identifiers & idents, const set<string> & names)
+  {
+    vector<shared_ptr<StatementAST>> imports;
+    for(auto name : names)
+    {
+      auto lhs = idents.forStdlibFunc(name);
+      shared_ptr<ExpressionAST> rhs = idents.stdlib;
+      string::size_type idx;
+      while((idx = name.find("__")) != string::npos)
+      {
+        auto head = name.substr(0, idx);
+        name = name.substr(idx + 2);
+        auto member = make_shared<IdentifierAST>(head);
+        rhs = make_shared<MemberExpressionAST>(rhs, member);
+      }
+      rhs = make_shared<MemberExpressionAST>(rhs, make_shared<IdentifierAST>(name));
+      auto stmt = make_shared<VariableDeclarationAST>(lhs, rhs);
+      imports.push_back(stmt);
+    }
+    return imports;
   }
 
 }
@@ -35,10 +61,11 @@ namespace rooibos {
     program->body.push_back(iifeCallStmt);
 
     auto asmFunc = make_shared<FunctionExpressionAST>();
+    auto & asmBody = asmFunc->body->body;
     asmFunc->params.push_back(idents.stdlib);
     asmFunc->params.push_back(idents.ffi);
     asmFunc->params.push_back(idents.heap);
-    asmFunc->body->body.push_back(make_shared<ExpressionStatementAST>(
+    asmBody.push_back(make_shared<ExpressionStatementAST>(
           make_shared<StringLiteralAST>("use asm")));
     auto asmRetVal = make_shared<ObjectExpressionAST>();
     iifeFunc->body->body.push_back(make_shared<VariableDeclarationAST>(
@@ -57,11 +84,18 @@ namespace rooibos {
             make_shared<MemberExpressionAST>(idents.globals, idents.asmExtern),
             idents.adaptors)));
 
+    set<string> stdlibSymbols;
+    vector<shared_ptr<StatementAST>> impls;
+
     for(auto & func : module.getFunctionList())
     {
-      codegen(func, idents, asmFunc, asmRetVal, adaptors);
+      codegen(func, idents, stdlibSymbols, impls, asmRetVal, adaptors);
     }
-    asmFunc->body->body.push_back(make_shared<ReturnStatementAST>(asmRetVal));
+
+    auto stdlibImports = generateStdlibImports(idents, stdlibSymbols);
+    asmBody.insert(asmBody.end(), stdlibImports.begin(), stdlibImports.end());
+    asmBody.insert(asmBody.end(), impls.begin(), impls.end());
+    asmBody.push_back(make_shared<ReturnStatementAST>(asmRetVal));
 
     return program;
   }

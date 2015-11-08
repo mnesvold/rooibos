@@ -1,5 +1,6 @@
 #include "rooibos/codegen.hh"
 
+#include <set>
 #include <unordered_map>
 
 #include <llvm/IR/InstVisitor.h>
@@ -17,6 +18,7 @@ namespace rooibos
     std::shared_ptr<IdentifierAST> forFunctionExtern(const std::string & name);
     std::shared_ptr<IdentifierAST> forInstruction(const llvm::Instruction &);
     std::shared_ptr<IdentifierAST> forParameter(const std::string & name);
+    std::shared_ptr<IdentifierAST> forStdlibFunc(const std::string & name);
 
   private:
     std::unordered_map<const llvm::Instruction *, unsigned int> _instIDMap;
@@ -25,7 +27,8 @@ namespace rooibos
 
   void codegen(llvm::Function & func,
                Identifiers & idents,
-               std::shared_ptr<FunctionExpressionAST> asmFunc,
+               std::set<std::string> & stdlib,
+               std::vector<std::shared_ptr<StatementAST>> & impls,
                std::shared_ptr<ObjectExpressionAST> asmRet,
                std::shared_ptr<ObjectExpressionAST> adaptors);
 
@@ -41,9 +44,10 @@ namespace rooibos
   {
   public:
     InstCodegenVisitor(Identifiers & idents,
+        std::set<std::string> & stdlib,
         std::vector<std::shared_ptr<VariableDeclaratorAST>> & vars,
         std::vector<std::shared_ptr<StatementAST>> & stmts)
-    : _idents(idents), _vars(vars), _stmts(stmts)
+    : _idents(idents), _stdlib(stdlib), _vars(vars), _stmts(stmts)
     {}
 
     void visitCallInst(llvm::CallInst &);
@@ -52,6 +56,7 @@ namespace rooibos
 
   private:
     Identifiers & _idents;
+    std::set<std::string> & _stdlib;
     std::vector<std::shared_ptr<VariableDeclaratorAST>> & _vars;
     std::vector<std::shared_ptr<StatementAST>> & _stmts;
 
