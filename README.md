@@ -21,7 +21,7 @@ Roobius has some dependencies that you'll need to wire up before you can compile
 5. Install [escodegen](https://github.com/estools/escodegen) and [UglifyJS](https://github.com/mishoo/UglifyJS): `cd $ROOT/tools; npm install escodegen ugilfy-js`
 6. Pick a variant: `tup variant configs/{default,release}.conf`
   * `default` includes debug symbols and produces some extra test output files (human-readable `.ll` and minified JS) to aid development
-  * `release` runs optimization passes on Rooibus itself and skips the extra test output
+  * `release` runs optimization passes on Rooibos itself and skips the extra test output
 6. Run Tup: `cd $ROOT; tup`
 
 If all dependencies are in place, this will build Rooibos and run the integration tests by running Rooibos against the C files in `tests` and `diff`ing against their expected results. If Tup comes back green and `Updated`, you're good to go.
