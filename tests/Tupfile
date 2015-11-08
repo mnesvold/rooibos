@@ -10,17 +10,19 @@ UGLIFY = $(ROOT)/tools/node_modules/.bin/uglifyjs
 # Use specific optimizations
 : foreach {bc} |> ^ Optimizing %B test^ $(BIN)/opt -mem2reg %f > %o |> %B.bc-opt {bcopt}
 
-# Generate human-readable version (for debugging)
-: foreach {bcopt} |> ^ Pretty-printing %B test^ $(BIN)/llvm-dis -o %o %f |> %B.ll
-
 # Generate JavaScript AST
 : foreach {bcopt} | $(ROOIBOS) |> ^ AST-ifying %B test^ $(ROOIBOS) < %f > %o |> %B.json {ast}
 
 # Generate Javascript
 : foreach {ast} |> ^ JS-ifying %B test^ $(ESGENERATE) %f > %o |> %B.js {js}
 
-# Minify (for comparison's sake)
-: foreach {js} |> ^ Minifying %B test^ $(UGLIFY) %f > %o |> %B.min.js
-
 # Check against expected result
 : foreach {js} |> ^ Checking %B test^ diff --unified %B.expected.js %f && touch %o |> %B.ok
+
+ifdef EXTRA_TEST_OUTPUT
+    # Generate human-readable version (for debugging)
+    : foreach {bcopt} |> ^ Pretty-printing %B test^ $(BIN)/llvm-dis -o %o %f |> %B.ll
+
+    # Minify (for comparison's sake)
+    : foreach {js} |> ^ Minifying %B test^ $(UGLIFY) %f > %o |> %B.min.js
+endif
