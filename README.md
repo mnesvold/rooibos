@@ -1,9 +1,9 @@
 # Rooibos
 > Highly experimental LLVM IR → ASM.JS compiler
 
-Rooibos converts [LLVM](http://llvm.org/) bitcode (most commonly produced with `clang -c -emit-llvm ...`) into [ASM.JS](http://asmjs.org/) code*. In theory, this means that any language that has an LLVM-compatible frontend (including C and dialects, thanks to Clang) can be used to write a web app frontend. (In practice, there's the small question of porting runtime libraries, but that's another matter.)
+Rooibos converts [LLVM](http://llvm.org/) bitcode (most commonly produced with `clang -c -emit-llvm ...`) into [ASM.JS](http://asmjs.org/) code¹. In theory, this means that any language that has an LLVM-compatible frontend (including C and dialects, thanks to Clang) can be used to write a web app frontend. (In practice, there's the small question of porting runtime libraries, but that's another matter.)
 
-*Technically, Rooibos generates a [SpiderMonkey](https://developer.mozilla.org/en-US/docs/Mozilla/Projects/SpiderMonkey/Parser_API)-compatible JSON representation of the AST for ASM.JS-compliant code. You'll need another tool to actually generate the JavaScript; see below.
+¹ Technically, Rooibos generates a [SpiderMonkey](https://developer.mozilla.org/en-US/docs/Mozilla/Projects/SpiderMonkey/Parser_API)-compatible JSON representation of the AST for ASM.JS-compliant code. You'll need another tool to actually generate the JavaScript; see below.
 
 ## Installation
 
@@ -22,7 +22,7 @@ Roobius has some dependencies that you'll need to wire up before you can compile
 6. Pick a variant: `tup variant configs/{default,release}.conf` (Use `default` to include debug symbols; use `release` to optimize Rooibos.)
 6. Run Tup: `cd $ROOT; tup`
 
-If all dependencies are in place, this will build Rooibos and run the integration tests by running Rooibos against the C files in `tests` and `diff`ing against their expected results. If Tup comes back green and "`Updated`", you're good to go.
+If all dependencies are in place, this will build Rooibos and run the integration tests by running Rooibos against the C files in `tests` and `diff`ing against their expected results. If Tup comes back green and `Updated`, you're good to go.
 
 ## Usage
 
