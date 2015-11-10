@@ -48,18 +48,18 @@ namespace rooibos
     shared_ptr<IdentifierAST> calleeIdent;
     if(isStdlibCall(calleeName))
     {
-      _stdlib.insert(calleeName);
-      calleeIdent = _idents.forStdlibFunc(calleeName);
+      _ctx.stdlib.insert(calleeName);
+      calleeIdent = _ctx.idents.forStdlibFunc(calleeName);
     }
       else
     {
-      calleeIdent = _idents.forFunction(calleeName);
+      calleeIdent = _ctx.idents.forFunction(calleeName);
     }
     auto call = make_shared<CallExpressionAST>(calleeIdent);
 
     for(auto & arg : inst.arg_operands())
     {
-      call->arguments.push_back(codegen(_idents, arg));
+      call->arguments.push_back(codegen(_ctx.idents, arg));
     }
 
     _emit(inst, call);
@@ -79,7 +79,7 @@ namespace rooibos
     Value * value = inst.getReturnValue();
     if(value)
     {
-      stmt->argument = codegen(_idents, value);
+      stmt->argument = codegen(_ctx.idents, value);
     }
     _stmts.push_back(stmt);
   }
@@ -100,7 +100,7 @@ namespace rooibos
   InstCodegenVisitor::_assign(Instruction & inst,
                               shared_ptr<ExpressionAST> expr)
   {
-    auto ident = _idents.forInstruction(inst);
+    auto ident = _ctx.idents.forInstruction(inst);
     _vars.push_back(make_shared<VariableDeclaratorAST>(
           ident, codegenDefaultValue(inst.getType())));
     return make_shared<AssignmentExpressionAST>(ident, expr);

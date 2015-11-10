@@ -79,10 +79,10 @@ namespace rooibos {
     bool needsHeap32 = false;
     vector<shared_ptr<StatementAST>> impls;
 
+    CodegenContext ctx { idents, stdlibSymbols, needsHeap32 };
     for(auto & func : module.getFunctionList())
     {
-      codegen(func, idents, stdlibSymbols, needsHeap32, impls, asmRetVal,
-          adaptors);
+      codegen(func, ctx, impls, asmRetVal, adaptors);
     }
 
     auto stdlibImports = generateStdlibImports(idents, stdlibSymbols);

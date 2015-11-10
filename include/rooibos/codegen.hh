@@ -14,10 +14,15 @@ namespace rooibos
 {
   std::unique_ptr<ProgramAST> codegen(llvm::Module & module);
 
+  struct CodegenContext
+  {
+      Identifiers & idents;
+      std::set<std::string> & stdlib;
+      bool & needsHeap32;
+  };
+
   void codegen(llvm::Function & func,
-               Identifiers & idents,
-               std::set<std::string> & stdlib,
-               bool & needsHeap32,
+               CodegenContext & ctx,
                std::vector<std::shared_ptr<StatementAST>> & impls,
                std::shared_ptr<ObjectExpressionAST> asmRet,
                std::shared_ptr<ObjectExpressionAST> adaptors);

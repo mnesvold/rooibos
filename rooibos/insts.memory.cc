@@ -28,18 +28,18 @@ namespace rooibos
   void
   InstCodegenVisitor::visitLoadInst(LoadInst & inst)
   {
-    _needsHeap32 = true;
-    auto expr = codegenHeapAccess(_idents, inst);
+    _ctx.needsHeap32 = true;
+    auto expr = codegenHeapAccess(_ctx.idents, inst);
     _emit(inst, expr);
   }
 
   void
   InstCodegenVisitor::visitStoreInst(StoreInst & inst)
   {
-    _needsHeap32 = true;
-    auto access = codegenHeapAccess(_idents, inst);
+    _ctx.needsHeap32 = true;
+    auto access = codegenHeapAccess(_ctx.idents, inst);
     auto expr = make_shared<AssignmentExpressionAST>(access,
-        codegen(_idents, inst.getValueOperand()));
+        codegen(_ctx.idents, inst.getValueOperand()));
     _emit(inst, expr);
   }
 }

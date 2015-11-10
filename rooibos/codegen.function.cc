@@ -14,13 +14,13 @@ namespace rooibos
 {
   void
   codegen(Function & func,
-          Identifiers & idents,
-          set<string> & stdlib,
-          bool & needsHeap32,
+          CodegenContext & ctx,
           vector<shared_ptr<StatementAST>> & impls,
           shared_ptr<ObjectExpressionAST> asmRet,
           shared_ptr<ObjectExpressionAST> adaptors)
   {
+      auto & idents = ctx.idents;
+
       if(func.isDeclaration())
       {
         return;
@@ -42,7 +42,7 @@ namespace rooibos
 
       vector<shared_ptr<VariableDeclaratorAST>> vars;
       vector<shared_ptr<StatementAST>> stmts;
-      InstCodegenVisitor instVisitor(idents, stdlib, needsHeap32, vars, stmts);
+      InstCodegenVisitor instVisitor(ctx, vars, stmts);
       instVisitor.visit(func);
 
       if(!vars.empty())

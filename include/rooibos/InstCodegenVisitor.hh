@@ -9,6 +9,7 @@
 #include <llvm/IR/InstVisitor.h>
 
 #include "rooibos/ast.hh"
+#include "rooibos/codegen.hh"
 #include "rooibos/identifiers.hh"
 
 namespace rooibos
@@ -16,13 +17,10 @@ namespace rooibos
   class InstCodegenVisitor : public llvm::InstVisitor<InstCodegenVisitor>
   {
   public:
-    InstCodegenVisitor(Identifiers & idents,
-        std::set<std::string> & stdlib,
-        bool & needsHeap32,
+    InstCodegenVisitor(CodegenContext & ctx,
         std::vector<std::shared_ptr<VariableDeclaratorAST>> & vars,
         std::vector<std::shared_ptr<StatementAST>> & stmts)
-    : _idents(idents), _stdlib(stdlib), _needsHeap32(needsHeap32), _vars(vars),
-    _stmts(stmts)
+    : _ctx(ctx), _vars(vars), _stmts(stmts)
     {}
 
     // Terminator instructions
@@ -37,9 +35,7 @@ namespace rooibos
     void visitInstruction(llvm::Instruction &); // fallback
 
   private:
-    Identifiers & _idents;
-    std::set<std::string> & _stdlib;
-    bool & _needsHeap32;
+    CodegenContext & _ctx;
     std::vector<std::shared_ptr<VariableDeclaratorAST>> & _vars;
     std::vector<std::shared_ptr<StatementAST>> & _stmts;
 
