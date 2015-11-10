@@ -27,6 +27,7 @@ namespace rooibos
     void visitReturnInst(llvm::ReturnInst &);
 
     // Memory instructions
+    void visitAllocaInst(llvm::AllocaInst &);
     void visitLoadInst(llvm::LoadInst &);
     void visitStoreInst(llvm::StoreInst &);
 

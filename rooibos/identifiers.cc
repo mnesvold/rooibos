@@ -27,10 +27,12 @@ namespace rooibos
     asm_(mkid("asm")),
     asmExtern(mkid("ASM")),
     ffi(mkid("ffi")),
+    FP(mkid("FP")),
     globals(mkid("globals")),
     heap(mkid("heap")),
     HEAP32(mkid("HEAP32")),
     Int32Array(mkid("Int32Array")),
+    SP(mkid("SP")),
     stdlib(mkid("stdlib")),
     this_(mkid("this"))
   {}

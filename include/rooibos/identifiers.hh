@@ -14,14 +14,21 @@ namespace rooibos
   {
     const std::shared_ptr<IdentifierAST>
       adaptors, ArrayBuffer, ASM, asm_, asmExtern,
-      ffi,
+      ffi, FP,
       globals,
       heap, HEAP32,
       Int32Array,
-      stdlib,
+      SP, stdlib,
       this_;
 
     Identifiers();
+
+    void
+    clearInstructionMap()
+    {
+      _instIDMap.clear();
+      _nextInstID = 0;
+    }
 
     std::shared_ptr<IdentifierAST> forFunction(const std::string & name);
     std::shared_ptr<IdentifierAST> forFunctionExtern(const std::string & name);

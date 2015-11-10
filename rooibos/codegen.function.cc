@@ -45,6 +45,28 @@ namespace rooibos
       InstCodegenVisitor instVisitor(ctx, vars, stmts);
       instVisitor.visit(func);
 
+      if(ctx.needsStackPointer)
+      {
+        auto decl = make_shared<VariableDeclaratorAST>(ctx.idents.FP,
+            make_shared<NumberLiteralAST>(0));
+        vars.insert(vars.begin(), decl);
+
+        auto coercedFP = make_shared<BinaryExpressionAST>(ctx.idents.SP,
+            BinaryOp::BITWISE_OR, make_shared<NumberLiteralAST>(0));
+        auto init = make_shared<AssignmentExpressionAST>(ctx.idents.FP,
+            coercedFP);
+        stmts.insert(stmts.begin(), make_shared<ExpressionStatementAST>(init));
+
+        auto fpReset = make_shared<ExpressionStatementAST>(
+            make_shared<AssignmentExpressionAST>(
+              ctx.idents.SP,
+              make_shared<BinaryExpressionAST>(
+                ctx.idents.FP,
+                BinaryOp::BITWISE_OR,
+                make_shared<NumberLiteralAST>(0))));
+        stmts.insert(stmts.end() - 1, fpReset);
+      }
+
       if(!vars.empty())
       {
         auto decl = make_shared<VariableDeclarationAST>();

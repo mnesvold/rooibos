@@ -19,6 +19,7 @@ namespace rooibos
       Identifiers & idents;
       std::set<std::string> & stdlib;
       bool & needsHeap32;
+      bool & needsStackPointer;
   };
 
   void codegen(llvm::Function & func,

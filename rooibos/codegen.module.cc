@@ -51,6 +51,7 @@ namespace rooibos {
   codegen(Module & module)
   {
     Identifiers idents;
+    auto STACK_SIZE = 64 * 1024;
 
     auto program = make_unique<ProgramAST>();
     auto iifeFunc = make_shared<FunctionExpressionAST>();
@@ -77,11 +78,13 @@ namespace rooibos {
     auto adaptors = make_shared<ObjectExpressionAST>();
     set<string> stdlibSymbols;
     bool needsHeap32 = false;
+    bool needsSP = false;
     vector<shared_ptr<StatementAST>> impls;
 
-    CodegenContext ctx { idents, stdlibSymbols, needsHeap32 };
+    CodegenContext ctx { idents, stdlibSymbols, needsHeap32, needsSP };
     for(auto & func : module.getFunctionList())
     {
+      idents.clearInstructionMap();
       codegen(func, ctx, impls, asmRetVal, adaptors);
     }
 
@@ -97,6 +100,11 @@ namespace rooibos {
           idents.HEAP32, call);
       asmBody.push_back(decl);
     }
+    if(needsSP)
+    {
+      asmBody.push_back(make_shared<VariableDeclarationAST>(
+          idents.SP, make_shared<NumberLiteralAST>(STACK_SIZE)));
+    }
     asmBody.insert(asmBody.end(), impls.begin(), impls.end());
     asmBody.push_back(make_shared<ReturnStatementAST>(asmRetVal));
 
@@ -108,7 +116,7 @@ namespace rooibos {
       auto ctor = make_shared<MemberExpressionAST>(
           idents.globals, idents.ArrayBuffer);
       auto call = make_shared<NewExpressionAST>(ctor);
-      call->arguments.push_back(make_shared<NumberLiteralAST>(64 * 1024));
+      call->arguments.push_back(make_shared<NumberLiteralAST>(STACK_SIZE));
       iifeFunc->body->body.push_back(make_shared<VariableDeclarationAST>(
           idents.heap, call));
 
