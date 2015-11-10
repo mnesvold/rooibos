@@ -73,29 +73,57 @@ namespace rooibos {
 
     auto asmCall = make_shared<CallExpressionAST>(idents.ASM);
     asmCall->arguments.push_back(idents.globals);
-    iifeFunc->body->body.push_back(make_shared<VariableDeclarationAST>(
-          idents.asm_, asmCall));
 
     auto adaptors = make_shared<ObjectExpressionAST>();
+    set<string> stdlibSymbols;
+    bool needsHeap32 = false;
+    vector<shared_ptr<StatementAST>> impls;
+
+    for(auto & func : module.getFunctionList())
+    {
+      codegen(func, idents, stdlibSymbols, needsHeap32, impls, asmRetVal,
+          adaptors);
+    }
+
+    auto stdlibImports = generateStdlibImports(idents, stdlibSymbols);
+    asmBody.insert(asmBody.end(), stdlibImports.begin(), stdlibImports.end());
+    if(needsHeap32)
+    {
+      auto ctor = make_shared<MemberExpressionAST>(
+          idents.stdlib, idents.Int32Array);
+      auto call = make_shared<NewExpressionAST>(ctor);
+      call->arguments.push_back(idents.heap);
+      auto decl = make_shared<VariableDeclarationAST>(
+          idents.HEAP32, call);
+      asmBody.push_back(decl);
+    }
+    asmBody.insert(asmBody.end(), impls.begin(), impls.end());
+    asmBody.push_back(make_shared<ReturnStatementAST>(asmRetVal));
+
+    if(needsHeap32)
+    {
+      iifeFunc->body->body.push_back(make_shared<VariableDeclarationAST>(
+          idents.ffi, make_shared<ObjectExpressionAST>()));
+
+      auto ctor = make_shared<MemberExpressionAST>(
+          idents.globals, idents.ArrayBuffer);
+      auto call = make_shared<NewExpressionAST>(ctor);
+      call->arguments.push_back(make_shared<NumberLiteralAST>(64 * 1024));
+      iifeFunc->body->body.push_back(make_shared<VariableDeclarationAST>(
+          idents.heap, call));
+
+      asmCall->arguments.push_back(idents.ffi);
+      asmCall->arguments.push_back(idents.heap);
+    }
+
+    iifeFunc->body->body.push_back(make_shared<VariableDeclarationAST>(
+          idents.asm_, asmCall));
     iifeFunc->body->body.push_back(make_shared<VariableDeclarationAST>(
           idents.adaptors, adaptors));
     iifeFunc->body->body.push_back(make_shared<ExpressionStatementAST>(
           make_shared<AssignmentExpressionAST>(
             make_shared<MemberExpressionAST>(idents.globals, idents.asmExtern),
             idents.adaptors)));
-
-    set<string> stdlibSymbols;
-    vector<shared_ptr<StatementAST>> impls;
-
-    for(auto & func : module.getFunctionList())
-    {
-      codegen(func, idents, stdlibSymbols, impls, asmRetVal, adaptors);
-    }
-
-    auto stdlibImports = generateStdlibImports(idents, stdlibSymbols);
-    asmBody.insert(asmBody.end(), stdlibImports.begin(), stdlibImports.end());
-    asmBody.insert(asmBody.end(), impls.begin(), impls.end());
-    asmBody.push_back(make_shared<ReturnStatementAST>(asmRetVal));
 
     return program;
   }

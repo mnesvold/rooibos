@@ -10,7 +10,8 @@ namespace rooibos
   struct Identifiers
   {
     const std::shared_ptr<IdentifierAST>
-      adaptors, ASM, asm_, asmExtern, ffi, globals, heap, stdlib, this_;
+      adaptors, ArrayBuffer, ASM, asm_, asmExtern,
+      ffi, globals, heap, HEAP32, Int32Array, stdlib, this_;
 
     Identifiers();
 
@@ -28,6 +29,7 @@ namespace rooibos
   void codegen(llvm::Function & func,
                Identifiers & idents,
                std::set<std::string> & stdlib,
+               bool & needsHeap32,
                std::vector<std::shared_ptr<StatementAST>> & impls,
                std::shared_ptr<ObjectExpressionAST> asmRet,
                std::shared_ptr<ObjectExpressionAST> adaptors);
@@ -45,18 +47,25 @@ namespace rooibos
   public:
     InstCodegenVisitor(Identifiers & idents,
         std::set<std::string> & stdlib,
+        bool & needsHeap32,
         std::vector<std::shared_ptr<VariableDeclaratorAST>> & vars,
         std::vector<std::shared_ptr<StatementAST>> & stmts)
-    : _idents(idents), _stdlib(stdlib), _vars(vars), _stmts(stmts)
+    : _idents(idents), _stdlib(stdlib), _needsHeap32(needsHeap32),_vars(vars),
+      _stmts(stmts)
     {}
 
     void visitCallInst(llvm::CallInst &);
     void visitInstruction(llvm::Instruction &);
     void visitReturnInst(llvm::ReturnInst &);
 
+    // Memory instructions
+    void visitLoadInst(llvm::LoadInst &);
+    void visitStoreInst(llvm::StoreInst &);
+
   private:
     Identifiers & _idents;
     std::set<std::string> & _stdlib;
+    bool & _needsHeap32;
     std::vector<std::shared_ptr<VariableDeclaratorAST>> & _vars;
     std::vector<std::shared_ptr<StatementAST>> & _stmts;
 

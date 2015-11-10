@@ -20,12 +20,15 @@ namespace rooibos
 {
   Identifiers::Identifiers()
   : adaptors(mkid("adaptors")),
+    ArrayBuffer(mkid("ArrayBuffer")),
     ASM(mkid("ASM")),
     asm_(mkid("asm")),
     asmExtern(mkid("ASM")),
     ffi(mkid("ffi")),
     globals(mkid("globals")),
     heap(mkid("heap")),
+    HEAP32(mkid("HEAP32")),
+    Int32Array(mkid("Int32Array")),
     stdlib(mkid("stdlib")),
     this_(mkid("this"))
   {}

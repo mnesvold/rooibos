@@ -26,7 +26,9 @@ namespace rooibos
       void visit(const FunctionExpressionAST & ast) override;
       void visit(const IdentifierAST & ast) override;
       void visit(const MemberExpressionAST & ast) override;
+      void visit(const NewExpressionAST & ast) override;
       void visit(const ObjectExpressionAST & ast) override;
+      void visit(const SubscriptExpressionAST & ast) override;
 
     private:
       json & j;
@@ -174,17 +176,26 @@ namespace rooibos
     {
       j = {
         { "type", "MemberExpression" },
-        { "calculated", false }
+        { "computed", false }
       };
       recurse(j, "object", ast.object);
       recurse(j, "property", ast.property);
+    }
+
+    void ExpressionJSONifier::visit(const NewExpressionAST & ast)
+    {
+      j = {
+        { "type", "NewExpression" },
+      };
+      recurse(j, "callee", ast.callee);
+      recurse(j, "arguments", ast.arguments);
     }
 
     void ExpressionJSONifier::visit(const ObjectExpressionAST & ast)
     {
       j = {
         { "type", "ObjectExpression" },
-        { "properties", {} }
+        { "properties", json::array() }
       };
       for(auto & prop : ast.props)
       {
@@ -196,6 +207,16 @@ namespace rooibos
         recurse(propJson, "value", prop->value);
         j["properties"] += propJson;
       }
+    }
+
+    void ExpressionJSONifier::visit(const SubscriptExpressionAST & ast)
+    {
+      j = {
+        { "type", "MemberExpression" },
+        { "computed", true }
+      };
+      recurse(j, "object", ast.object);
+      recurse(j, "property", ast.subscript);
     }
 
     void StatementJSONifier::visit(const FunctionDeclarationAST & ast)
