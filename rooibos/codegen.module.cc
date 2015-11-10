@@ -1,5 +1,7 @@
 #include "rooibos/codegen.hh"
 
+#include "rooibos/util.hh"
+
 using std::forward;
 using std::make_shared;
 using std::move;
@@ -13,12 +15,6 @@ using llvm::Module;
 
 namespace {
   using namespace rooibos;
-
-  template<class T, class... Args>
-  unique_ptr<T> make_unique(Args&&... args)
-  {
-    return unique_ptr<T>(new T(forward<Args>(args)...));
-  }
 
   vector<shared_ptr<StatementAST>>
   generateStdlibImports(Identifiers & idents, const set<string> & names)
