@@ -1,4 +1,6 @@
-#include "rooibos/codegen-internal.hh"
+#include "rooibos/codegen.hh"
+
+#include "rooibos/InstCodegenVisitor.hh"
 
 using std::make_shared;
 using std::set;

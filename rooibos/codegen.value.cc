@@ -1,4 +1,6 @@
-#include "rooibos/codegen-internal.hh"
+#include "rooibos/codegen.hh"
+
+#include <llvm/IR/Constants.h>
 
 using std::make_shared;
 using std::shared_ptr;

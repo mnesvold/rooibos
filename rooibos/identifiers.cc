@@ -1,4 +1,6 @@
-#include "rooibos/codegen-internal.hh"
+#include "rooibos/identifiers.hh"
+
+#include <llvm/ADT/Twine.h>
 
 using std::make_shared;
 using std::shared_ptr;

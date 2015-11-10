@@ -1,4 +1,4 @@
-#include "rooibos/codegen-internal.hh"
+#include "rooibos/codegen.hh"
 
 using std::forward;
 using std::make_shared;

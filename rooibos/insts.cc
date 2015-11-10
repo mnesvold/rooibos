@@ -1,6 +1,8 @@
-#include "rooibos/codegen-internal.hh"
+#include "rooibos/InstCodegenVisitor.hh"
 
 #include <algorithm>
+
+#include "rooibos/codegen.hh"
 
 using std::equal;
 using std::make_shared;
