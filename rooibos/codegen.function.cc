@@ -28,7 +28,7 @@ namespace rooibos
       auto funcIdent = idents.forFunction(func.getName());
       auto externIdent = idents.forFunctionExtern(func.getName());
 
-      auto impl = make_shared<FunctionDeclarationAST>(funcIdent);
+      auto impl = FunctionDeclarationAST::create(funcIdent);
 
       vector<StatementAST::ptr> paramCoercions;
       for(auto & param : func.getArgumentList())
@@ -36,8 +36,8 @@ namespace rooibos
         auto ident = idents.forParameter(param.getName());
         impl->params.push_back(ident);
         auto typeExpr = codegen(idents, &param);
-        auto paramType = make_shared<AssignmentExpressionAST>(ident, typeExpr);
-        paramCoercions.push_back(make_shared<ExpressionStatementAST>(paramType));
+        auto paramType = AssignmentExpressionAST::create(ident, typeExpr);
+        paramCoercions.push_back(ExpressionStatementAST::create(paramType));
       }
 
       vector<VariableDeclaratorAST::ptr> vars;
@@ -47,29 +47,29 @@ namespace rooibos
 
       if(ctx.needsStackPointer)
       {
-        auto decl = make_shared<VariableDeclaratorAST>(ctx.idents.FP,
-            make_shared<NumberLiteralAST>(0));
+        auto decl = VariableDeclaratorAST::create(ctx.idents.FP,
+            NumberLiteralAST::create(0));
         vars.insert(vars.begin(), decl);
 
-        auto coercedFP = make_shared<BinaryExpressionAST>(ctx.idents.SP,
-            BinaryOp::BITWISE_OR, make_shared<NumberLiteralAST>(0));
-        auto init = make_shared<AssignmentExpressionAST>(ctx.idents.FP,
+        auto coercedFP = BinaryExpressionAST::create(ctx.idents.SP,
+            BinaryOp::BITWISE_OR, NumberLiteralAST::create(0));
+        auto init = AssignmentExpressionAST::create(ctx.idents.FP,
             coercedFP);
-        stmts.insert(stmts.begin(), make_shared<ExpressionStatementAST>(init));
+        stmts.insert(stmts.begin(), ExpressionStatementAST::create(init));
 
-        auto fpReset = make_shared<ExpressionStatementAST>(
-            make_shared<AssignmentExpressionAST>(
+        auto fpReset = ExpressionStatementAST::create(
+            AssignmentExpressionAST::create(
               ctx.idents.SP,
-              make_shared<BinaryExpressionAST>(
+              BinaryExpressionAST::create(
                 ctx.idents.FP,
                 BinaryOp::BITWISE_OR,
-                make_shared<NumberLiteralAST>(0))));
+                NumberLiteralAST::create(0))));
         stmts.insert(stmts.end() - 1, fpReset);
       }
 
       if(!vars.empty())
       {
-        auto decl = make_shared<VariableDeclarationAST>();
+        auto decl = VariableDeclarationAST::create();
         decl->decls.insert(decl->decls.begin(), vars.begin(), vars.end());
         stmts.insert(stmts.begin(), decl);
       }
@@ -79,9 +79,9 @@ namespace rooibos
       body.insert(body.end(), stmts.begin(), stmts.end());
 
       impls.push_back(impl);
-      asmRet->props.push_back(make_shared<PropertyAST>(funcIdent, funcIdent));
-      adaptors->props.push_back(make_shared<PropertyAST>(
+      asmRet->props.push_back(PropertyAST::create(funcIdent, funcIdent));
+      adaptors->props.push_back(PropertyAST::create(
             externIdent,
-            make_shared<MemberExpressionAST>(idents.asm_, funcIdent)));
+            MemberExpressionAST::create(idents.asm_, funcIdent)));
   }
 }

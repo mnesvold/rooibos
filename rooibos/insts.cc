@@ -55,7 +55,7 @@ namespace rooibos
     {
       calleeIdent = _ctx.idents.forFunction(calleeName);
     }
-    auto call = make_shared<CallExpressionAST>(calleeIdent);
+    auto call = CallExpressionAST::create(calleeIdent);
 
     for(auto & arg : inst.arg_operands())
     {
@@ -68,14 +68,14 @@ namespace rooibos
   void
   InstCodegenVisitor::visitInstruction(Instruction & inst)
   {
-    _stmts.push_back(make_shared<ExpressionStatementAST>(
-          make_shared<StringLiteralAST>(inst.getOpcodeName())));
+    _stmts.push_back(ExpressionStatementAST::create(
+          StringLiteralAST::create(inst.getOpcodeName())));
   }
 
   void
   InstCodegenVisitor::visitReturnInst(ReturnInst & inst)
   {
-    auto stmt = make_shared<ReturnStatementAST>();
+    auto stmt = ReturnStatementAST::create();
     Value * value = inst.getReturnValue();
     if(value)
     {
@@ -92,7 +92,7 @@ namespace rooibos
     {
       stmtExpr = _assign(inst, coerce(inst.getType(), expr));
     }
-    auto stmt = make_shared<ExpressionStatementAST>(stmtExpr);
+    auto stmt = ExpressionStatementAST::create(stmtExpr);
     _stmts.push_back(stmt);
   }
 
@@ -101,8 +101,8 @@ namespace rooibos
                               ExpressionAST::ptr expr)
   {
     auto ident = _ctx.idents.forInstruction(inst);
-    _vars.push_back(make_shared<VariableDeclaratorAST>(
+    _vars.push_back(VariableDeclaratorAST::create(
           ident, codegenDefaultValue(inst.getType())));
-    return make_shared<AssignmentExpressionAST>(ident, expr);
+    return AssignmentExpressionAST::create(ident, expr);
   }
 }

@@ -17,14 +17,14 @@ namespace rooibos
   ExpressionAST::ptr
   coerce(Type * type, ExpressionAST::ptr expr)
   {
-    return make_shared<BinaryExpressionAST>(expr, BinaryOp::BITWISE_OR,
-        make_shared<NumberLiteralAST>(0));
+    return BinaryExpressionAST::create(expr, BinaryOp::BITWISE_OR,
+        NumberLiteralAST::create(0));
   }
 
   ExpressionAST::ptr
   codegenDefaultValue(const Type * type)
   {
-    return make_shared<NumberLiteralAST>(0);
+    return NumberLiteralAST::create(0);
   }
 
   ExpressionAST::ptr
@@ -41,7 +41,7 @@ namespace rooibos
     }
       else if(ConstantInt * k = dyn_cast<ConstantInt>(value))
     {
-      expr = make_shared<NumberLiteralAST>(k->getSExtValue());
+      expr = NumberLiteralAST::create(k->getSExtValue());
     }
       else if(Instruction * inst = dyn_cast<Instruction>(value))
     {

@@ -40,13 +40,13 @@ namespace rooibos
   IdentifierAST::ptr
   Identifiers::forFunction(const string & name)
   {
-    return make_shared<IdentifierAST>("f_" + name);
+    return IdentifierAST::create("f_" + name);
   }
 
   IdentifierAST::ptr
   Identifiers::forFunctionExtern(const string & name)
   {
-    return make_shared<IdentifierAST>(name);
+    return IdentifierAST::create(name);
   }
 
   IdentifierAST::ptr
@@ -63,18 +63,18 @@ namespace rooibos
       _instIDMap[&inst] = id;
     }
     auto ident = ("l_" + Twine(id)).str();
-    return make_shared<IdentifierAST>(ident);
+    return IdentifierAST::create(ident);
   }
 
   IdentifierAST::ptr
   Identifiers::forParameter(const string & name)
   {
-    return make_shared<IdentifierAST>("p_" + name);
+    return IdentifierAST::create("p_" + name);
   }
 
   IdentifierAST::ptr
   Identifiers::forStdlibFunc(const string & name)
   {
-    return make_shared<IdentifierAST>("stdlib_" + name);
+    return IdentifierAST::create("stdlib_" + name);
   }
 }
