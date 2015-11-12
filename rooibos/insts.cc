@@ -45,7 +45,7 @@ namespace rooibos
   {
     auto callee = inst.getCalledFunction();
     string calleeName = callee->getName();
-    shared_ptr<IdentifierAST> calleeIdent;
+    IdentifierAST::ptr calleeIdent;
     if(isStdlibCall(calleeName))
     {
       _ctx.stdlib.insert(calleeName);
@@ -85,7 +85,7 @@ namespace rooibos
   }
 
   void
-  InstCodegenVisitor::_emit(Instruction & inst, shared_ptr<ExpressionAST> expr)
+  InstCodegenVisitor::_emit(Instruction & inst, ExpressionAST::ptr expr)
   {
     auto stmtExpr = expr;
     if(inst.hasNUsesOrMore(1))
@@ -96,9 +96,9 @@ namespace rooibos
     _stmts.push_back(stmt);
   }
 
-  shared_ptr<ExpressionAST>
+  ExpressionAST::ptr
   InstCodegenVisitor::_assign(Instruction & inst,
-                              shared_ptr<ExpressionAST> expr)
+                              ExpressionAST::ptr expr)
   {
     auto ident = _ctx.idents.forInstruction(inst);
     _vars.push_back(make_shared<VariableDeclaratorAST>(

@@ -30,11 +30,15 @@ namespace rooibos
 
   struct StatementAST : ASTNode
   {
+    typedef std::shared_ptr<StatementAST> ptr;
+
     virtual void accept(StatementVisitor &) const = 0;
   };
 
   struct DeclarationAST : StatementAST
   {
+    typedef std::shared_ptr<DeclarationAST> ptr;
+
     void accept(StatementVisitor & visitor) const override
     {
       accept((DeclarationVisitor &)visitor);
@@ -45,11 +49,15 @@ namespace rooibos
 
   struct PatternAST : ASTNode
   {
+    typedef std::shared_ptr<PatternAST> ptr;
+
     virtual void accept(PatternVisitor & visitor) const = 0;
   };
 
   struct ExpressionAST : PatternAST
   {
+    typedef std::shared_ptr<ExpressionAST> ptr;
+
     void accept(PatternVisitor & visitor) const override
     {
       return accept((ExpressionVisitor &)visitor);
@@ -61,6 +69,8 @@ namespace rooibos
   struct LiteralAST : ExpressionAST
   {
     using ExpressionAST::accept;
+
+    typedef std::shared_ptr<LiteralAST> ptr;
 
     void accept(ExpressionVisitor & visitor) const override
     {

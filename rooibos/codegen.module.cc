@@ -16,14 +16,14 @@ using llvm::Module;
 namespace {
   using namespace rooibos;
 
-  vector<shared_ptr<StatementAST>>
+  vector<StatementAST::ptr>
   generateStdlibImports(Identifiers & idents, const set<string> & names)
   {
-    vector<shared_ptr<StatementAST>> imports;
+    vector<StatementAST::ptr> imports;
     for(auto name : names)
     {
       auto lhs = idents.forStdlibFunc(name);
-      shared_ptr<ExpressionAST> rhs = idents.stdlib;
+      ExpressionAST::ptr rhs = idents.stdlib;
       string::size_type idx;
       while((idx = name.find("__")) != string::npos)
       {
@@ -75,7 +75,7 @@ namespace rooibos {
     set<string> stdlibSymbols;
     bool needsHeap32 = false;
     bool needsSP = false;
-    vector<shared_ptr<StatementAST>> impls;
+    vector<StatementAST::ptr> impls;
 
     CodegenContext ctx { idents, stdlibSymbols, needsHeap32, needsSP };
     for(auto & func : module.getFunctionList())

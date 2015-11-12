@@ -14,23 +14,23 @@ using llvm::Value;
 
 namespace rooibos
 {
-  shared_ptr<ExpressionAST>
-  coerce(Type * type, shared_ptr<ExpressionAST> expr)
+  ExpressionAST::ptr
+  coerce(Type * type, ExpressionAST::ptr expr)
   {
     return make_shared<BinaryExpressionAST>(expr, BinaryOp::BITWISE_OR,
         make_shared<NumberLiteralAST>(0));
   }
 
-  shared_ptr<ExpressionAST>
+  ExpressionAST::ptr
   codegenDefaultValue(const Type * type)
   {
     return make_shared<NumberLiteralAST>(0);
   }
 
-  shared_ptr<ExpressionAST>
+  ExpressionAST::ptr
   codegen(Identifiers & idents, Value * value)
   {
-    shared_ptr<ExpressionAST> expr;
+    ExpressionAST::ptr expr;
     if(!value)
     {
       return nullptr;

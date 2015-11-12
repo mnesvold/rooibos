@@ -12,7 +12,7 @@ namespace rooibos
 {
   struct Identifiers
   {
-    const std::shared_ptr<IdentifierAST>
+    const IdentifierAST::ptr
       adaptors, ArrayBuffer, ASM, asm_, asmExtern,
       ffi, FP,
       globals,
@@ -30,11 +30,11 @@ namespace rooibos
       _nextInstID = 0;
     }
 
-    std::shared_ptr<IdentifierAST> forFunction(const std::string & name);
-    std::shared_ptr<IdentifierAST> forFunctionExtern(const std::string & name);
-    std::shared_ptr<IdentifierAST> forInstruction(const llvm::Instruction & i);
-    std::shared_ptr<IdentifierAST> forParameter(const std::string & name);
-    std::shared_ptr<IdentifierAST> forStdlibFunc(const std::string & name);
+    IdentifierAST::ptr forFunction(const std::string & name);
+    IdentifierAST::ptr forFunctionExtern(const std::string & name);
+    IdentifierAST::ptr forInstruction(const llvm::Instruction & i);
+    IdentifierAST::ptr forParameter(const std::string & name);
+    IdentifierAST::ptr forStdlibFunc(const std::string & name);
 
   private:
     std::unordered_map<const llvm::Instruction *, unsigned int> _instIDMap;

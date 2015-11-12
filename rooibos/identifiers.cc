@@ -37,19 +37,19 @@ namespace rooibos
     this_(mkid("this"))
   {}
 
-  shared_ptr<IdentifierAST>
+  IdentifierAST::ptr
   Identifiers::forFunction(const string & name)
   {
     return make_shared<IdentifierAST>("f_" + name);
   }
 
-  shared_ptr<IdentifierAST>
+  IdentifierAST::ptr
   Identifiers::forFunctionExtern(const string & name)
   {
     return make_shared<IdentifierAST>(name);
   }
 
-  shared_ptr<IdentifierAST>
+  IdentifierAST::ptr
   Identifiers::forInstruction(const Instruction & inst)
   {
     unsigned int id;
@@ -66,13 +66,13 @@ namespace rooibos
     return make_shared<IdentifierAST>(ident);
   }
 
-  shared_ptr<IdentifierAST>
+  IdentifierAST::ptr
   Identifiers::forParameter(const string & name)
   {
     return make_shared<IdentifierAST>("p_" + name);
   }
 
-  shared_ptr<IdentifierAST>
+  IdentifierAST::ptr
   Identifiers::forStdlibFunc(const string & name)
   {
     return make_shared<IdentifierAST>("stdlib_" + name);

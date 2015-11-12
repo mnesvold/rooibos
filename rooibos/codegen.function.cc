@@ -15,9 +15,9 @@ namespace rooibos
   void
   codegen(Function & func,
           CodegenContext & ctx,
-          vector<shared_ptr<StatementAST>> & impls,
-          shared_ptr<ObjectExpressionAST> asmRet,
-          shared_ptr<ObjectExpressionAST> adaptors)
+          vector<StatementAST::ptr> & impls,
+          ObjectExpressionAST::ptr asmRet,
+          ObjectExpressionAST::ptr adaptors)
   {
       auto & idents = ctx.idents;
 
@@ -30,7 +30,7 @@ namespace rooibos
 
       auto impl = make_shared<FunctionDeclarationAST>(funcIdent);
 
-      vector<shared_ptr<StatementAST>> paramCoercions;
+      vector<StatementAST::ptr> paramCoercions;
       for(auto & param : func.getArgumentList())
       {
         auto ident = idents.forParameter(param.getName());
@@ -40,8 +40,8 @@ namespace rooibos
         paramCoercions.push_back(make_shared<ExpressionStatementAST>(paramType));
       }
 
-      vector<shared_ptr<VariableDeclaratorAST>> vars;
-      vector<shared_ptr<StatementAST>> stmts;
+      vector<VariableDeclaratorAST::ptr> vars;
+      vector<StatementAST::ptr> stmts;
       InstCodegenVisitor instVisitor(ctx, vars, stmts);
       instVisitor.visit(func);
 

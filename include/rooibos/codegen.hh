@@ -24,16 +24,16 @@ namespace rooibos
 
   void codegen(llvm::Function & func,
                CodegenContext & ctx,
-               std::vector<std::shared_ptr<StatementAST>> & impls,
-               std::shared_ptr<ObjectExpressionAST> asmRet,
-               std::shared_ptr<ObjectExpressionAST> adaptors);
+               std::vector<StatementAST::ptr> & impls,
+               ObjectExpressionAST::ptr asmRet,
+               ObjectExpressionAST::ptr adaptors);
 
-  std::shared_ptr<ExpressionAST> codegen(Identifiers &, llvm::Value *);
+  ExpressionAST::ptr codegen(Identifiers &, llvm::Value *);
 
-  std::shared_ptr<ExpressionAST>
-  coerce(llvm::Type *, std::shared_ptr<ExpressionAST>);
+  ExpressionAST::ptr
+  coerce(llvm::Type *, ExpressionAST::ptr);
 
-  std::shared_ptr<ExpressionAST>
+  ExpressionAST::ptr
   codegenDefaultValue(const llvm::Type *);
 }
 

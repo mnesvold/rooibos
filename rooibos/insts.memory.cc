@@ -14,7 +14,7 @@ namespace rooibos
   namespace
   {
     template<typename T>
-    shared_ptr<ExpressionAST>
+    ExpressionAST::ptr
     codegenHeapAccess(Identifiers & idents, T & inst)
     {
       auto unshiftedOffset = codegen(idents, inst.getPointerOperand());

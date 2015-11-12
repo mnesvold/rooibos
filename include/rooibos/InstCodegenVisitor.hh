@@ -18,8 +18,8 @@ namespace rooibos
   {
   public:
     InstCodegenVisitor(CodegenContext & ctx,
-        std::vector<std::shared_ptr<VariableDeclaratorAST>> & vars,
-        std::vector<std::shared_ptr<StatementAST>> & stmts)
+        std::vector<VariableDeclaratorAST::ptr> & vars,
+        std::vector<StatementAST::ptr> & stmts)
     : _ctx(ctx), _vars(vars), _stmts(stmts)
     {}
 
@@ -37,12 +37,12 @@ namespace rooibos
 
   private:
     CodegenContext & _ctx;
-    std::vector<std::shared_ptr<VariableDeclaratorAST>> & _vars;
-    std::vector<std::shared_ptr<StatementAST>> & _stmts;
+    std::vector<VariableDeclaratorAST::ptr> & _vars;
+    std::vector<StatementAST::ptr> & _stmts;
 
-    void _emit(llvm::Instruction &, std::shared_ptr<ExpressionAST>);
-    std::shared_ptr<ExpressionAST>
-    _assign(llvm::Instruction &, std::shared_ptr<ExpressionAST>);
+    void _emit(llvm::Instruction &, ExpressionAST::ptr);
+    ExpressionAST::ptr
+    _assign(llvm::Instruction &, ExpressionAST::ptr);
   };
 }
 
