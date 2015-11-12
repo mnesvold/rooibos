@@ -17,6 +17,8 @@ namespace rooibos
 
   struct AssignmentExpressionAST : ExpressionAST
   {
+    ROOIBOS_AST_DEFINE_PTR(AssignmentExpressionAST)
+
     std::shared_ptr<PatternAST> lhs;
     std::shared_ptr<ExpressionAST> rhs;
 
@@ -33,6 +35,8 @@ namespace rooibos
 
   struct BinaryExpressionAST : ExpressionAST
   {
+    ROOIBOS_AST_DEFINE_PTR(BinaryExpressionAST)
+
     std::shared_ptr<ExpressionAST> lhs;
     std::string op;
     std::shared_ptr<ExpressionAST> rhs;
@@ -51,6 +55,8 @@ namespace rooibos
 
   struct CallExpressionAST : ExpressionAST
   {
+    ROOIBOS_AST_DEFINE_PTR(CallExpressionAST)
+
     std::shared_ptr<ExpressionAST> callee;
     std::vector<std::shared_ptr<ExpressionAST>> arguments;
 
@@ -66,6 +72,8 @@ namespace rooibos
 
   struct FunctionExpressionAST : ExpressionAST
   {
+    ROOIBOS_AST_DEFINE_PTR(FunctionExpressionAST)
+
     std::vector<std::shared_ptr<PatternAST>> params;
     std::shared_ptr<BlockStatementAST> body;
 
@@ -82,6 +90,8 @@ namespace rooibos
 
   struct IdentifierAST : ExpressionAST
   {
+    ROOIBOS_AST_DEFINE_PTR(IdentifierAST)
+
     std::string name;
 
     explicit IdentifierAST(const std::string & name)
@@ -96,6 +106,8 @@ namespace rooibos
 
   struct MemberExpressionAST : ExpressionAST
   {
+    ROOIBOS_AST_DEFINE_PTR(MemberExpressionAST)
+
     std::shared_ptr<ExpressionAST> object;
     std::shared_ptr<IdentifierAST> property;
 
@@ -112,6 +124,8 @@ namespace rooibos
 
   struct NewExpressionAST : ExpressionAST
   {
+    ROOIBOS_AST_DEFINE_PTR(NewExpressionAST)
+
     std::shared_ptr<ExpressionAST> callee;
     std::vector<std::shared_ptr<ExpressionAST>> arguments;
 
@@ -127,6 +141,8 @@ namespace rooibos
 
   struct SubscriptExpressionAST : ExpressionAST
   {
+    ROOIBOS_AST_DEFINE_PTR(SubscriptExpressionAST)
+
     std::shared_ptr<ExpressionAST> object;
     std::shared_ptr<ExpressionAST> subscript;
 

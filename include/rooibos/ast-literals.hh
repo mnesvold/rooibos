@@ -9,6 +9,8 @@ namespace rooibos
 {
   struct NumberLiteralAST : LiteralAST
   {
+    ROOIBOS_AST_DEFINE_PTR(NumberLiteralAST)
+
     long value;
 
     explicit NumberLiteralAST(long value) : value(value) {}
@@ -21,6 +23,8 @@ namespace rooibos
 
   struct StringLiteralAST : LiteralAST
   {
+    ROOIBOS_AST_DEFINE_PTR(StringLiteralAST)
+
     std::string value;
 
     explicit StringLiteralAST(const std::string & value) : value(value) {}

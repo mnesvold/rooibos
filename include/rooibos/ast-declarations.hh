@@ -10,6 +10,8 @@ namespace rooibos
 {
   struct FunctionDeclarationAST : DeclarationAST
   {
+    ROOIBOS_AST_DEFINE_PTR(FunctionDeclarationAST)
+
     std::shared_ptr<IdentifierAST> name;
     std::vector<std::shared_ptr<PatternAST>> params;
     std::shared_ptr<BlockStatementAST> body;
@@ -28,6 +30,8 @@ namespace rooibos
 
   struct PropertyAST : ASTNode
   {
+    ROOIBOS_AST_DEFINE_PTR(PropertyAST)
+
     std::shared_ptr<IdentifierAST> key;
     std::shared_ptr<ExpressionAST> value;
 
@@ -39,6 +43,8 @@ namespace rooibos
 
   struct ObjectExpressionAST : ExpressionAST
   {
+    ROOIBOS_AST_DEFINE_PTR(ObjectExpressionAST)
+
     std::vector<std::shared_ptr<PropertyAST>> props;
 
     void accept(ExpressionVisitor & visitor) const override
@@ -49,6 +55,8 @@ namespace rooibos
 
   struct VariableDeclaratorAST : ASTNode
   {
+    ROOIBOS_AST_DEFINE_PTR(VariableDeclaratorAST)
+
     std::shared_ptr<PatternAST> id;
     std::shared_ptr<ExpressionAST> init;
 
@@ -61,6 +69,8 @@ namespace rooibos
 
   struct VariableDeclarationAST : DeclarationAST
   {
+    ROOIBOS_AST_DEFINE_PTR(VariableDeclarationAST)
+
     std::vector<std::shared_ptr<VariableDeclaratorAST>> decls;
 
     VariableDeclarationAST()

@@ -10,6 +10,8 @@ namespace rooibos
 {
   struct BlockStatementAST : StatementAST
   {
+    ROOIBOS_AST_DEFINE_PTR(BlockStatementAST)
+
     std::vector<std::shared_ptr<StatementAST>> body;
 
     void accept(StatementVisitor & visitor) const override
@@ -20,6 +22,8 @@ namespace rooibos
 
   struct EmptyStatementAST : StatementAST
   {
+    ROOIBOS_AST_DEFINE_PTR(EmptyStatementAST)
+
     void accept(StatementVisitor & visitor) const override
     {
       visitor.visit(*this);
@@ -28,6 +32,8 @@ namespace rooibos
 
   struct ExpressionStatementAST : StatementAST
   {
+    ROOIBOS_AST_DEFINE_PTR(ExpressionStatementAST)
+
     std::shared_ptr<ExpressionAST> expression;
 
     explicit ExpressionStatementAST(std::shared_ptr<ExpressionAST> expr)
@@ -42,6 +48,8 @@ namespace rooibos
 
   struct ReturnStatementAST : StatementAST
   {
+    ROOIBOS_AST_DEFINE_PTR(ReturnStatementAST)
+
     std::shared_ptr<ExpressionAST> argument;
 
     explicit ReturnStatementAST(std::shared_ptr<ExpressionAST> arg=nullptr)

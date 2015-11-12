@@ -8,6 +8,14 @@
 
 namespace rooibos
 {
+  #define ROOIBOS_AST_DEFINE_PTR(NAME) \
+    typedef std::shared_ptr<NAME> ptr; \
+    template<class... Args> \
+    static ptr create(Args&&... args) \
+    { \
+      return std::make_shared<NAME>(std::forward<Args>(args)...); \
+    }
+
   struct ASTNode
   {
     virtual ~ASTNode() {};
@@ -15,6 +23,8 @@ namespace rooibos
 
   struct ProgramAST : ASTNode
   {
+    ROOIBOS_AST_DEFINE_PTR(ProgramAST)
+
     std::vector<std::shared_ptr<StatementAST>> body;
   };
 
