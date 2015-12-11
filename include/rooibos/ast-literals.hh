@@ -7,6 +7,20 @@
 
 namespace rooibos
 {
+  struct DoubleLiteralAST : LiteralAST
+  {
+    ROOIBOS_AST_DEFINE_PTR(DoubleLiteralAST)
+
+    double value;
+
+    explicit DoubleLiteralAST(double value) : value(value) {}
+
+    void accept(LiteralVisitor & visitor) const
+    {
+      visitor.visit(*this);
+    }
+  };
+
   struct NumberLiteralAST : LiteralAST
   {
     ROOIBOS_AST_DEFINE_PTR(NumberLiteralAST)

@@ -2,11 +2,7 @@
 
 #include "rooibos/util.hh"
 
-using std::forward;
-using std::make_shared;
-using std::move;
 using std::set;
-using std::shared_ptr;
 using std::string;
 using std::unique_ptr;
 using std::vector;

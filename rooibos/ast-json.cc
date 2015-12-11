@@ -18,6 +18,7 @@ namespace rooibos
     public:
       ExpressionJSONifier(json & j) : j(j) {}
 
+      void visit(const DoubleLiteralAST & ast) override;
       void visit(const NumberLiteralAST & ast) override;
       void visit(const StringLiteralAST & ast) override;
       void visit(const AssignmentExpressionAST & ast) override;
@@ -29,6 +30,7 @@ namespace rooibos
       void visit(const NewExpressionAST & ast) override;
       void visit(const ObjectExpressionAST & ast) override;
       void visit(const SubscriptExpressionAST & ast) override;
+      void visit(const UnaryExpressionAST & ast) override;
 
     private:
       json & j;
@@ -103,6 +105,14 @@ namespace rooibos
     recurse(json & j, const string & key, const vector<shared_ptr<E>> & ast)
     {
       _recurse<E,StatementJSONifier>(j, key, ast);
+    }
+
+    void ExpressionJSONifier::visit(const DoubleLiteralAST & ast)
+    {
+      j = {
+        { "type", "Literal" },
+        { "value", ast.value }
+      };
     }
 
     void ExpressionJSONifier::visit(const NumberLiteralAST & ast)
@@ -217,6 +227,16 @@ namespace rooibos
       };
       recurse(j, "object", ast.object);
       recurse(j, "property", ast.subscript);
+    }
+
+    void ExpressionJSONifier::visit(const UnaryExpressionAST & ast)
+    {
+      j = {
+        { "type", "UnaryExpression" },
+        { "prefix", true },
+        { "operator", ast.op }
+      };
+      recurse(j, "argument", ast.argument);
     }
 
     void StatementJSONifier::visit(const FunctionDeclarationAST & ast)

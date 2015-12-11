@@ -7,6 +7,7 @@ namespace rooibos
   struct BinaryExpressionAST;
   struct BlockStatementAST;
   struct CallExpressionAST;
+  struct DoubleLiteralAST;
   struct EmptyStatementAST;
   struct ExpressionAST;
   struct ExpressionStatementAST;
@@ -23,6 +24,7 @@ namespace rooibos
   struct StatementAST;
   struct StringLiteralAST;
   struct SubscriptExpressionAST;
+  struct UnaryExpressionAST;
   struct VariableDeclarationAST;
   struct VariableDeclaratorAST;
 
@@ -31,6 +33,7 @@ namespace rooibos
   public:
     virtual ~LiteralVisitor() {};
 
+    virtual void visit(const DoubleLiteralAST &) = 0;
     virtual void visit(const NumberLiteralAST &) = 0;
     virtual void visit(const StringLiteralAST &) = 0;
   };
@@ -51,6 +54,7 @@ namespace rooibos
     virtual void visit(const NewExpressionAST &) = 0;
     virtual void visit(const ObjectExpressionAST &) = 0;
     virtual void visit(const SubscriptExpressionAST &) = 0;
+    virtual void visit(const UnaryExpressionAST &) = 0;
   };
 
   class PatternVisitor : public ExpressionVisitor

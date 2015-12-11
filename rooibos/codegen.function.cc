@@ -2,9 +2,7 @@
 
 #include "rooibos/InstCodegenVisitor.hh"
 
-using std::make_shared;
 using std::set;
-using std::shared_ptr;
 using std::string;
 using std::vector;
 

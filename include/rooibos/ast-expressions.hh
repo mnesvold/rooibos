@@ -15,6 +15,11 @@ namespace rooibos
     static const std::string SHIFT_RIGHT = ">>";
   }
 
+  namespace UnaryOp
+  {
+    static const std::string PLUS = "+";
+  }
+
   struct AssignmentExpressionAST : ExpressionAST
   {
     ROOIBOS_AST_DEFINE_PTR(AssignmentExpressionAST)
@@ -149,6 +154,24 @@ namespace rooibos
     SubscriptExpressionAST(std::shared_ptr<ExpressionAST> object,
                            std::shared_ptr<ExpressionAST> subscript)
     : object(object), subscript(subscript)
+    {}
+
+    void accept(ExpressionVisitor & visitor) const override
+    {
+      visitor.visit(*this);
+    }
+  };
+
+  struct UnaryExpressionAST : ExpressionAST
+  {
+    ROOIBOS_AST_DEFINE_PTR(UnaryExpressionAST)
+
+    std::string op;
+    std::shared_ptr<ExpressionAST> argument;
+
+    UnaryExpressionAST(const std::string & op,
+                       std::shared_ptr<ExpressionAST> argument)
+    : op(op), argument(argument)
     {}
 
     void accept(ExpressionVisitor & visitor) const override

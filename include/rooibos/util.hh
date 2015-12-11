@@ -11,6 +11,8 @@ namespace rooibos
   {
     return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
   }
+
+  void panic(const std::string & msg) __attribute__((noreturn));
 }
 
 #endif

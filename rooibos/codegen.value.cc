@@ -1,11 +1,14 @@
 #include "rooibos/codegen.hh"
 
+#include "rooibos/util.hh"
+
 #include <llvm/IR/Constants.h>
 
 using std::make_shared;
 using std::shared_ptr;
 
 using llvm::Argument;
+using llvm::ConstantFP;
 using llvm::ConstantInt;
 using llvm::dyn_cast;
 using llvm::Instruction;
@@ -17,14 +20,38 @@ namespace rooibos
   ExpressionAST::ptr
   coerce(Type * type, ExpressionAST::ptr expr)
   {
-    return BinaryExpressionAST::create(expr, BinaryOp::BITWISE_OR,
-        NumberLiteralAST::create(0));
+    if(type->isIntegerTy() || type->isPointerTy())
+    {
+      return BinaryExpressionAST::create(expr, BinaryOp::BITWISE_OR,
+          NumberLiteralAST::create(0));
+    }
+      else if(type->isDoubleTy())
+    {
+      return UnaryExpressionAST::create(UnaryOp::PLUS, expr);
+    }
+      else
+    {
+      type->dump();
+      panic("^-- is un-codegen-able type");
+    }
   }
 
   ExpressionAST::ptr
   codegenDefaultValue(const Type * type)
   {
-    return NumberLiteralAST::create(0);
+    if(type->isIntegerTy() || type->isPointerTy())
+    {
+      return NumberLiteralAST::create(0);
+    }
+      else if(type->isDoubleTy())
+    {
+      return DoubleLiteralAST::create(0.1);
+    }
+      else
+    {
+      type->dump();
+      panic("^-- is un-codegen-able type");
+    }
   }
 
   ExpressionAST::ptr
@@ -39,6 +66,10 @@ namespace rooibos
     {
       expr = idents.forParameter(arg->getName());
     }
+      else if(ConstantFP * k = dyn_cast<ConstantFP>(value))
+    {
+      expr = NumberLiteralAST::create(k->getValueAPF().convertToDouble());
+    }
       else if(ConstantInt * k = dyn_cast<ConstantInt>(value))
     {
       expr = NumberLiteralAST::create(k->getSExtValue());
@@ -49,7 +80,8 @@ namespace rooibos
     }
       else
     {
-      return nullptr;
+      value->dump();
+      panic("^-- has un-codegen-able type");
     }
     return coerce(value->getType(), expr);
   }
