@@ -10,6 +10,8 @@ namespace rooibos
 {
   namespace BinaryOp
   {
+    static const std::string ADD = "+";
+    static const std::string MUL = "*";
     static const std::string SUB = "-";
     static const std::string BITWISE_OR = "|";
     static const std::string SHIFT_RIGHT = ">>";

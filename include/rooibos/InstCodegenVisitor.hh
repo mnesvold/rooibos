@@ -26,6 +26,9 @@ namespace rooibos
     // Terminator instructions
     void visitReturnInst(llvm::ReturnInst &);
 
+    // Binary instructions
+    void visitBinaryOperator(llvm::BinaryOperator &);
+
     // Memory instructions
     void visitAllocaInst(llvm::AllocaInst &);
     void visitLoadInst(llvm::LoadInst &);
