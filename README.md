@@ -76,7 +76,7 @@ Rooibos is meant to be not overly verbose in its output, partially inspired by C
 * Type support
   * [X] Integers
   * [ ] Floats
-  * [ ] Doubles
+  * [X] Doubles
 * Dependency system integrations
   * [X] Direct global assignment (`window.ASM = ...`)
   * [ ] CommonJS (`require([], function() { ... })`)
