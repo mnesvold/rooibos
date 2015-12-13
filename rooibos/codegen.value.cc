@@ -12,6 +12,7 @@ using llvm::ConstantFP;
 using llvm::ConstantInt;
 using llvm::dyn_cast;
 using llvm::Instruction;
+using llvm::StructType;
 using llvm::Type;
 using llvm::Value;
 
@@ -34,6 +35,33 @@ namespace rooibos
       type->dump();
       panic("^-- is un-codegen-able type");
     }
+  }
+
+  long
+  codegenTypeSize(const llvm::Type * type)
+  {
+    if(auto bitWidth = type->getPrimitiveSizeInBits())
+    {
+      return (bitWidth + 7) / 8;
+    }
+    if(auto structType = dyn_cast<StructType>(type))
+    {
+      if(structType->isPacked())
+      {
+        type->dump();
+        panic("^-- is un-size-able type (because it is packed)");
+      }
+      auto total = 0;
+      for(auto it=structType->element_begin(), end=structType->element_end();
+          it != end;
+          ++it)
+      {
+        total += codegenTypeSize(*it);
+      }
+      return total;
+    }
+    type->dump();
+    panic("^-- is un-size-able type");
   }
 
   ExpressionAST::ptr

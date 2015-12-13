@@ -33,6 +33,7 @@ namespace rooibos
     void visitAllocaInst(llvm::AllocaInst &);
     void visitLoadInst(llvm::LoadInst &);
     void visitStoreInst(llvm::StoreInst &);
+    void visitGetElementPtrInst(llvm::GetElementPtrInst &);
 
     // Other instructions
     void visitCallInst(llvm::CallInst &);

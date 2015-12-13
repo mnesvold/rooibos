@@ -35,6 +35,9 @@ namespace rooibos
 
   ExpressionAST::ptr
   codegenDefaultValue(const llvm::Type *);
+
+  long
+  codegenTypeSize(const llvm::Type *);
 }
 
 #endif
