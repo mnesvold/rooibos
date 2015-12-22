@@ -60,14 +60,6 @@ namespace rooibos
   void
   InstCodegenVisitor::visitGetElementPtrInst(GetElementPtrInst & inst)
   {
-//  inst.getSourceElementType()->dump();
-//  inst.getResultElementType()->dump();
-//  inst.getPointerOperand()->dump();
-//  for(auto it=inst.idx_begin(), end=inst.idx_end(); it != end; ++it)
-//  {
-//    (*it)->dump();
-//  }
-
     auto base = codegen(_ctx.idents, inst.getPointerOperand());
 
     auto type = inst.getPointerOperand()->getType();
