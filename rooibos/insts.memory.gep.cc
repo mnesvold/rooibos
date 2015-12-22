@@ -21,6 +21,8 @@ namespace rooibos
 {
   namespace
   {
+    const char * IMUL_FUNC_NAME = "Math__imul";
+
     ExpressionAST::ptr
     getTypeElementOffset(Identifiers & idents,
                          Type ** typePtr,
@@ -33,8 +35,11 @@ namespace rooibos
         *typePtr = elementType;
         auto size = codegenTypeSize(elementType);
         auto step = codegen(idents, index);
-        return BinaryExpressionAST::create(
-            NumberLiteralAST::create(size), BinaryOp::MUL, step);
+        auto imul = idents.forStdlibFunc(IMUL_FUNC_NAME);
+        auto call = CallExpressionAST::create(imul);
+        call->arguments.push_back(NumberLiteralAST::create(size));
+        call->arguments.push_back(step);
+        return call;
       }
       if(auto structType = dyn_cast<StructType>(type))
       {
@@ -60,6 +65,8 @@ namespace rooibos
   void
   InstCodegenVisitor::visitGetElementPtrInst(GetElementPtrInst & inst)
   {
+    _ctx.stdlib.insert(IMUL_FUNC_NAME);
+
     auto base = codegen(_ctx.idents, inst.getPointerOperand());
 
     auto type = inst.getPointerOperand()->getType();
