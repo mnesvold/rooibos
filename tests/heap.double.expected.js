@@ -18,7 +18,7 @@
         function f_stack_allocation() {
             var FP = 0, l_0 = 0;
             FP = SP | 0;
-            SP = (SP | 0) - 4 | 0;
+            SP = (SP | 0) - 8 | 0;
             l_0 = SP | 0;
             f_store(l_0 | 0, +3);
             SP = FP | 0;

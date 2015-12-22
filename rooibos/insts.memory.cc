@@ -43,7 +43,7 @@ namespace rooibos
     auto coercedSP = BinaryExpressionAST::create(SP, BinaryOp::BITWISE_OR,
         NumberLiteralAST::create(0));
     auto spSub = BinaryExpressionAST::create(coercedSP, BinaryOp::SUB,
-        NumberLiteralAST::create(4));
+        NumberLiteralAST::create(codegenTypeSize(inst.getAllocatedType())));
     auto coercedSPSub = BinaryExpressionAST::create(spSub,
         BinaryOp::BITWISE_OR, NumberLiteralAST::create(0));
     _stmts.push_back(ExpressionStatementAST::create(
