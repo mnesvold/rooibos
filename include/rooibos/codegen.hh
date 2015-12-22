@@ -39,6 +39,9 @@ namespace rooibos
   IdentifierAST::ptr
   codegenHeapIdent(Identifiers &, const llvm::Type *);
 
+  unsigned
+  codegenHeapShift(const llvm::Type *);
+
   ExpressionAST::ptr
   codegenDefaultValue(const llvm::Type *);
 

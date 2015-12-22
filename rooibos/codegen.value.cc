@@ -86,6 +86,28 @@ namespace rooibos
     panic("^-- is un-heap-able type");
   }
 
+  unsigned
+  codegenHeapShift(const llvm::Type * type)
+  {
+    if(type->isIntegerTy())
+    {
+      switch(type->getPrimitiveSizeInBits())
+      {
+        case 32:
+          return 2;
+        default:
+          type->dump();
+          panic("^-- is un-heap-shift-able type (because of its bit width)");
+      }
+    }
+    if(type->isDoubleTy())
+    {
+      return 3;
+    }
+    type->dump();
+    panic("^-- is un-heap-shift-able type");
+  }
+
   ExpressionAST::ptr
   codegenDefaultValue(const Type * type)
   {

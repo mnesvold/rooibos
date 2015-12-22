@@ -6,13 +6,13 @@
         function f_load(p_pointer) {
             p_pointer = p_pointer | 0;
             var l_0 = 0.1;
-            l_0 = +HEAP64F[(p_pointer | 0) >> 2];
+            l_0 = +HEAP64F[(p_pointer | 0) >> 3];
             return +l_0;
         }
         function f_store(p_pointer, p_value) {
             p_pointer = p_pointer | 0;
             p_value = +p_value;
-            HEAP64F[(p_pointer | 0) >> 2] = +p_value;
+            HEAP64F[(p_pointer | 0) >> 3] = +p_value;
             return;
         }
         function f_stack_allocation() {

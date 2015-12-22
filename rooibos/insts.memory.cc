@@ -19,13 +19,15 @@ namespace rooibos
     ExpressionAST::ptr
     codegenHeapAccess(Identifiers & idents, T & inst, S & heaps)
     {
+      auto ptrType = cast<PointerType>(inst.getPointerOperand()->getType());
+      auto valueType = ptrType->getElementType();
+
       auto unshiftedOffset = codegen(idents, inst.getPointerOperand());
+      auto shiftAmount = codegenHeapShift(valueType);
       auto offset = BinaryExpressionAST::create(
           unshiftedOffset, BinaryOp::SHIFT_RIGHT,
-          NumberLiteralAST::create(2));
-      auto ptrType = inst.getPointerOperand()->getType();
-      auto heapType = cast<PointerType>(ptrType)->getElementType();
-      auto heap = codegenHeapIdent(idents, heapType);
+          NumberLiteralAST::create(shiftAmount));
+      auto heap = codegenHeapIdent(idents, valueType);
       heaps.insert(heap);
       auto expr = SubscriptExpressionAST::create(heap, offset);
       return expr;
