@@ -64,6 +64,28 @@ namespace rooibos
     panic("^-- is un-size-able type");
   }
 
+  IdentifierAST::ptr
+  codegenHeapIdent(Identifiers & idents, const Type * type)
+  {
+    if(type->isIntegerTy())
+    {
+      switch(type->getPrimitiveSizeInBits())
+      {
+        case 32:
+          return idents.HEAP32;
+        default:
+          type->dump();
+          panic("^-- is un-heap-able type (because of its bit width)");
+      }
+    }
+    if(type->isDoubleTy())
+    {
+      return idents.HEAP64F;
+    }
+    type->dump();
+    panic("^-- is un-heap-able type");
+  }
+
   ExpressionAST::ptr
   codegenDefaultValue(const Type * type)
   {

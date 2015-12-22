@@ -14,9 +14,9 @@ namespace rooibos
   {
     const IdentifierAST::ptr
       adaptors, ArrayBuffer, ASM, asm_, asmExtern,
-      ffi, FP,
+      ffi, Float64Array, FP,
       globals,
-      heap, HEAP32,
+      heap, HEAP32, HEAP64F,
       Int32Array,
       SP, stdlib,
       this_;

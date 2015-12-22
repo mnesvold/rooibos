@@ -8,6 +8,7 @@ using std::unique_ptr;
 using std::vector;
 
 using llvm::Module;
+using llvm::SmallSet;
 
 namespace {
   using namespace rooibos;
@@ -33,6 +34,18 @@ namespace {
       imports.push_back(stmt);
     }
     return imports;
+  }
+
+  VariableDeclarationAST::ptr
+  importHeap(Identifiers & idents,
+             IdentifierAST::ptr name,
+             IdentifierAST::ptr cls)
+  {
+    auto ctor = MemberExpressionAST::create(idents.stdlib, cls);
+    auto call = NewExpressionAST::create(ctor);
+    call->arguments.push_back(idents.heap);
+    auto decl = VariableDeclarationAST::create(name, call);
+    return decl;
   }
 
 }
@@ -69,11 +82,11 @@ namespace rooibos {
 
     auto adaptors = ObjectExpressionAST::create();
     set<string> stdlibSymbols;
-    bool needsHeap32 = false;
+    CodegenContext::heap_set_type heaps;
     bool needsSP = false;
     vector<StatementAST::ptr> impls;
 
-    CodegenContext ctx { idents, stdlibSymbols, needsHeap32, needsSP };
+    CodegenContext ctx { idents, stdlibSymbols, heaps, needsSP };
     for(auto & func : module.getFunctionList())
     {
       idents.clearInstructionMap();
@@ -82,16 +95,12 @@ namespace rooibos {
 
     auto stdlibImports = generateStdlibImports(idents, stdlibSymbols);
     asmBody.insert(asmBody.end(), stdlibImports.begin(), stdlibImports.end());
-    if(needsHeap32)
-    {
-      auto ctor = MemberExpressionAST::create(
-          idents.stdlib, idents.Int32Array);
-      auto call = NewExpressionAST::create(ctor);
-      call->arguments.push_back(idents.heap);
-      auto decl = VariableDeclarationAST::create(
-          idents.HEAP32, call);
-      asmBody.push_back(decl);
-    }
+
+    if(heaps.count(idents.HEAP32))
+      asmBody.push_back(importHeap(idents, idents.HEAP32, idents.Int32Array));
+    if(heaps.count(idents.HEAP64F))
+      asmBody.push_back(importHeap(idents, idents.HEAP64F, idents.Float64Array));
+
     if(needsSP)
     {
       asmBody.push_back(VariableDeclarationAST::create(
@@ -100,7 +109,7 @@ namespace rooibos {
     asmBody.insert(asmBody.end(), impls.begin(), impls.end());
     asmBody.push_back(ReturnStatementAST::create(asmRetVal));
 
-    if(needsHeap32)
+    if(heaps.size() > 0)
     {
       iifeFunc->body->body.push_back(VariableDeclarationAST::create(
           idents.ffi, ObjectExpressionAST::create()));

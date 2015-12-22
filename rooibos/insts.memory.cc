@@ -6,22 +6,28 @@ using std::make_shared;
 using std::shared_ptr;
 
 using llvm::AllocaInst;
+using llvm::cast;
 using llvm::LoadInst;
+using llvm::PointerType;
 using llvm::StoreInst;
 
 namespace rooibos
 {
   namespace
   {
-    template<typename T>
+    template<typename T, typename S>
     ExpressionAST::ptr
-    codegenHeapAccess(Identifiers & idents, T & inst)
+    codegenHeapAccess(Identifiers & idents, T & inst, S & heaps)
     {
       auto unshiftedOffset = codegen(idents, inst.getPointerOperand());
       auto offset = BinaryExpressionAST::create(
           unshiftedOffset, BinaryOp::SHIFT_RIGHT,
           NumberLiteralAST::create(2));
-      auto expr = SubscriptExpressionAST::create(idents.HEAP32, offset);
+      auto ptrType = inst.getPointerOperand()->getType();
+      auto heapType = cast<PointerType>(ptrType)->getElementType();
+      auto heap = codegenHeapIdent(idents, heapType);
+      heaps.insert(heap);
+      auto expr = SubscriptExpressionAST::create(heap, offset);
       return expr;
     }
   }
@@ -46,16 +52,14 @@ namespace rooibos
   void
   InstCodegenVisitor::visitLoadInst(LoadInst & inst)
   {
-    _ctx.needsHeap32 = true;
-    auto expr = codegenHeapAccess(_ctx.idents, inst);
+    auto expr = codegenHeapAccess(_ctx.idents, inst, _ctx.heaps);
     _emit(inst, expr);
   }
 
   void
   InstCodegenVisitor::visitStoreInst(StoreInst & inst)
   {
-    _ctx.needsHeap32 = true;
-    auto access = codegenHeapAccess(_ctx.idents, inst);
+    auto access = codegenHeapAccess(_ctx.idents, inst, _ctx.heaps);
     auto expr = AssignmentExpressionAST::create(access,
         codegen(_ctx.idents, inst.getValueOperand()));
     _emit(inst, expr);

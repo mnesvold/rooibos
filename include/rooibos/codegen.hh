@@ -5,6 +5,7 @@
 #include <set>
 #include <vector>
 
+#include <llvm/ADT/SmallSet.h>
 #include <llvm/IR/Module.h>
 
 #include "rooibos/ast.hh"
@@ -16,10 +17,12 @@ namespace rooibos
 
   struct CodegenContext
   {
-      Identifiers & idents;
-      std::set<std::string> & stdlib;
-      bool & needsHeap32;
-      bool & needsStackPointer;
+    typedef llvm::SmallSet<IdentifierAST::ptr, 2> heap_set_type;
+
+    Identifiers & idents;
+    std::set<std::string> & stdlib;
+    heap_set_type & heaps;
+    bool & needsStackPointer;
   };
 
   void codegen(llvm::Function & func,
@@ -32,6 +35,9 @@ namespace rooibos
 
   ExpressionAST::ptr
   coerce(llvm::Type *, ExpressionAST::ptr);
+
+  IdentifierAST::ptr
+  codegenHeapIdent(Identifiers &, const llvm::Type *);
 
   ExpressionAST::ptr
   codegenDefaultValue(const llvm::Type *);
