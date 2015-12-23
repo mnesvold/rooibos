@@ -10,6 +10,9 @@ UGLIFY = $(ROOT)/tools/node_modules/.bin/uglifyjs
 # Use specific optimizations
 : foreach {bc} |> ^ Optimizing %B test^ $(BIN)/opt -mem2reg %f > %o |> %B.bc-opt {bcopt}
 
+# Pick up hand-written .ll tests
+: foreach *.ll-in |> ^ Compiling %B test^ $(BIN)/llvm-as < %f > %o |> %B.bc {bcopt}
+
 # Generate JavaScript AST
 : foreach {bcopt} | $(ROOIBOS) |> ^ AST-ifying %B test^ $(ROOIBOS) < %f > %o |> %B.json {ast}
 

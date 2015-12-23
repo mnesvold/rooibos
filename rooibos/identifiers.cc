@@ -1,8 +1,19 @@
 #include "rooibos/identifiers.hh"
 
+#include <algorithm>
+#include <cctype>
+#include <iomanip>
+#include <sstream>
+
 #include <llvm/ADT/Twine.h>
 
+using std::for_each;
+using std::hex;
+using std::isalnum;
 using std::make_shared;
+using std::ostringstream;
+using std::setfill;
+using std::setw;
 using std::shared_ptr;
 using std::string;
 
@@ -12,9 +23,26 @@ using llvm::Twine;
 namespace
 {
   shared_ptr<rooibos::IdentifierAST>
-  mkid(const std::string & name)
+  mkid(const string & name)
   {
     return make_shared<rooibos::IdentifierAST>(name);
+  }
+
+  string
+  sanitize(const string & name)
+  {
+    ostringstream result;
+    result << hex << setfill('0');
+    for_each(name.begin(), name.end(), [&](string::value_type c)
+    {
+      if(c == '$')
+        result << "$$";
+      else if((c == '_') || isalnum(c))
+        result << c;
+      else
+        result << '$' << setw(2) << (int)c;
+    });
+    return result.str();
   }
 }
 
@@ -42,13 +70,13 @@ namespace rooibos
   IdentifierAST::ptr
   Identifiers::forFunction(const string & name)
   {
-    return IdentifierAST::create("f_" + name);
+    return IdentifierAST::create("f_" + sanitize(name));
   }
 
   IdentifierAST::ptr
   Identifiers::forFunctionExtern(const string & name)
   {
-    return IdentifierAST::create(name);
+    return IdentifierAST::create(sanitize(name));
   }
 
   IdentifierAST::ptr
@@ -71,12 +99,12 @@ namespace rooibos
   IdentifierAST::ptr
   Identifiers::forParameter(const string & name)
   {
-    return IdentifierAST::create("p_" + name);
+    return IdentifierAST::create("p_" + sanitize(name));
   }
 
   IdentifierAST::ptr
   Identifiers::forStdlibFunc(const string & name)
   {
-    return IdentifierAST::create("stdlib_" + name);
+    return IdentifierAST::create("stdlib_" + sanitize(name));
   }
 }
