@@ -37,6 +37,8 @@ namespace
     {
       if(c == '$')
         result << "$$";
+      else if(c == '.')
+        result << "$_";
       else if((c == '_') || isalnum(c))
         result << c;
       else

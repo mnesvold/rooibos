@@ -7,7 +7,7 @@
             f_but_$$_is();
             f_as$2dare$2dhyphens();
             f_also$20spaces();
-            f_and$2eperiods();
+            f_and$_periods();
             f_and_things_like_$01();
             return;
         }
