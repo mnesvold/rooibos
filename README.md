@@ -72,7 +72,7 @@ Rooibos is meant to be not overly verbose in its output, partially inspired by C
   * [ ] Calls to the ASM.JS foreign function interface
   * [X] Heap access
   * [ ] `asm` support
-  * [ ] All other IR instructions
+  * [ ] All other IR instructions (see `README.instructions.md`)
 * Type support
   * [X] Integers
   * [ ] Floats
