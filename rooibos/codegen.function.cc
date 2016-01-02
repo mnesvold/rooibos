@@ -51,8 +51,10 @@ namespace rooibos
       auto externIdent = idents.forFunctionExtern(func.getName());
 
       auto impl = FunctionDeclarationAST::create(funcIdent);
+      auto & body = impl->body->body;
+      vector<StatementAST::ptr> paramCoercions, prologue, core, epilogue;
+      vector<VariableDeclaratorAST::ptr> vars;
 
-      vector<StatementAST::ptr> paramCoercions;
       for(auto & param : func.getArgumentList())
       {
         auto ident = idents.forParameter(param.getName());
@@ -62,9 +64,7 @@ namespace rooibos
         paramCoercions.push_back(ExpressionStatementAST::create(paramType));
       }
 
-      vector<VariableDeclaratorAST::ptr> vars;
-      vector<StatementAST::ptr> stmts;
-      InstCodegenVisitor instVisitor(ctx, vars, stmts);
+      InstCodegenVisitor instVisitor(ctx, vars, core);
       instVisitor.visit(func);
 
       if(ctx.needsStackPointer)
@@ -73,20 +73,20 @@ namespace rooibos
             NumberLiteralAST::create(0));
         vars.insert(vars.begin(), decl);
 
-        stmts.insert(stmts.begin(), codegen_fp_prologue(ctx));
-        stmts.insert(stmts.end() - 1, codegen_fp_epilogue(ctx));
+        prologue.push_back(codegen_fp_prologue(ctx));
+        epilogue.push_back(codegen_fp_epilogue(ctx));
       }
 
+      body.insert(body.begin(), paramCoercions.begin(), paramCoercions.end());
       if(!vars.empty())
       {
         auto decl = VariableDeclarationAST::create();
         decl->decls.insert(decl->decls.begin(), vars.begin(), vars.end());
-        stmts.insert(stmts.begin(), decl);
+        body.push_back(decl);
       }
-
-      auto & body = impl->body->body;
-      body.insert(body.end(), paramCoercions.begin(), paramCoercions.end());
-      body.insert(body.end(), stmts.begin(), stmts.end());
+      body.insert(body.end(), prologue.begin(), prologue.end());
+      body.insert(body.end(), core.begin(), core.end());
+      body.insert(body.end(), epilogue.begin(), epilogue.end());
 
       impls.push_back(impl);
       asmRet->props.push_back(PropertyAST::create(funcIdent, funcIdent));
