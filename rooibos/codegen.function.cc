@@ -10,6 +10,30 @@ using llvm::Function;
 
 namespace rooibos
 {
+  namespace
+  {
+    ExpressionStatementAST::ptr
+    codegen_fp_prologue(CodegenContext & ctx)
+    {
+      auto coercedFP = BinaryExpressionAST::create(ctx.idents.SP,
+          BinaryOp::BITWISE_OR, NumberLiteralAST::create(0));
+      auto init = AssignmentExpressionAST::create(ctx.idents.FP, coercedFP);
+      return ExpressionStatementAST::create(init);
+    }
+
+    ExpressionStatementAST::ptr
+    codegen_fp_epilogue(CodegenContext & ctx)
+    {
+      return ExpressionStatementAST::create(
+          AssignmentExpressionAST::create(
+            ctx.idents.SP,
+            BinaryExpressionAST::create(
+              ctx.idents.FP,
+              BinaryOp::BITWISE_OR,
+              NumberLiteralAST::create(0))));
+    }
+  }
+
   void
   codegen(Function & func,
           CodegenContext & ctx,
@@ -49,20 +73,8 @@ namespace rooibos
             NumberLiteralAST::create(0));
         vars.insert(vars.begin(), decl);
 
-        auto coercedFP = BinaryExpressionAST::create(ctx.idents.SP,
-            BinaryOp::BITWISE_OR, NumberLiteralAST::create(0));
-        auto init = AssignmentExpressionAST::create(ctx.idents.FP,
-            coercedFP);
-        stmts.insert(stmts.begin(), ExpressionStatementAST::create(init));
-
-        auto fpReset = ExpressionStatementAST::create(
-            AssignmentExpressionAST::create(
-              ctx.idents.SP,
-              BinaryExpressionAST::create(
-                ctx.idents.FP,
-                BinaryOp::BITWISE_OR,
-                NumberLiteralAST::create(0))));
-        stmts.insert(stmts.end() - 1, fpReset);
+        stmts.insert(stmts.begin(), codegen_fp_prologue(ctx));
+        stmts.insert(stmts.end() - 1, codegen_fp_epilogue(ctx));
       }
 
       if(!vars.empty())
