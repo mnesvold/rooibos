@@ -1,6 +1,7 @@
 #include "rooibos/codegen.hh"
 
 #include "rooibos/InstCodegenVisitor.hh"
+#include "rooibos/InstContextVisitor.hh"
 
 using std::set;
 using std::string;
@@ -12,6 +13,13 @@ namespace rooibos
 {
   namespace
   {
+    VariableDeclaratorAST::ptr
+    codegen_fp_var_decl(CodegenContext & ctx)
+    {
+      return VariableDeclaratorAST::create(ctx.idents.FP,
+          NumberLiteralAST::create(0));
+    }
+
     ExpressionStatementAST::ptr
     codegen_fp_prologue(CodegenContext & ctx)
     {
@@ -50,10 +58,21 @@ namespace rooibos
       auto funcIdent = idents.forFunction(func.getName());
       auto externIdent = idents.forFunctionExtern(func.getName());
 
+      InstContextVisitor reqs;
+      reqs.visit(func);
+
       auto impl = FunctionDeclarationAST::create(funcIdent);
       auto & body = impl->body->body;
       vector<StatementAST::ptr> paramCoercions, prologue, core, epilogue;
       vector<VariableDeclaratorAST::ptr> vars;
+
+      if(reqs.needsFramePointer())
+      {
+        ctx.needsStackPointer = true;
+        vars.insert(vars.begin(), codegen_fp_var_decl(ctx));
+        prologue.push_back(codegen_fp_prologue(ctx));
+        epilogue.push_back(codegen_fp_epilogue(ctx));
+      }
 
       for(auto & param : func.getArgumentList())
       {
@@ -64,18 +83,8 @@ namespace rooibos
         paramCoercions.push_back(ExpressionStatementAST::create(paramType));
       }
 
-      InstCodegenVisitor instVisitor(ctx, vars, core);
+      InstCodegenVisitor instVisitor(ctx, vars, core, epilogue);
       instVisitor.visit(func);
-
-      if(ctx.needsStackPointer)
-      {
-        auto decl = VariableDeclaratorAST::create(ctx.idents.FP,
-            NumberLiteralAST::create(0));
-        vars.insert(vars.begin(), decl);
-
-        prologue.push_back(codegen_fp_prologue(ctx));
-        epilogue.push_back(codegen_fp_epilogue(ctx));
-      }
 
       body.insert(body.begin(), paramCoercions.begin(), paramCoercions.end());
       if(!vars.empty())
@@ -86,7 +95,6 @@ namespace rooibos
       }
       body.insert(body.end(), prologue.begin(), prologue.end());
       body.insert(body.end(), core.begin(), core.end());
-      body.insert(body.end(), epilogue.begin(), epilogue.end());
 
       impls.push_back(impl);
       asmRet->props.push_back(PropertyAST::create(funcIdent, funcIdent));

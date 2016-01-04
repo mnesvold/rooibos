@@ -81,6 +81,7 @@ namespace rooibos
     {
       stmt->argument = codegen(_ctx.idents, value);
     }
+    _stmts.insert(_stmts.end(), _epilogue.begin(), _epilogue.end());
     _stmts.push_back(stmt);
   }
 

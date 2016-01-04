@@ -19,8 +19,9 @@ namespace rooibos
   public:
     InstCodegenVisitor(CodegenContext & ctx,
         std::vector<VariableDeclaratorAST::ptr> & vars,
-        std::vector<StatementAST::ptr> & stmts)
-    : _ctx(ctx), _vars(vars), _stmts(stmts)
+        std::vector<StatementAST::ptr> & stmts,
+        const std::vector<StatementAST::ptr> & epilogue)
+    : _ctx(ctx), _vars(vars), _stmts(stmts), _epilogue(epilogue)
     {}
 
     // Terminator instructions
@@ -43,6 +44,7 @@ namespace rooibos
     CodegenContext & _ctx;
     std::vector<VariableDeclaratorAST::ptr> & _vars;
     std::vector<StatementAST::ptr> & _stmts;
+    const std::vector<StatementAST::ptr> & _epilogue;
 
     void _emit(llvm::Instruction &, ExpressionAST::ptr);
     ExpressionAST::ptr
