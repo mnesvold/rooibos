@@ -14,7 +14,6 @@ using llvm::CallInst;
 using llvm::ConstantInt;
 using llvm::dyn_cast_or_null;
 using llvm::Instruction;
-using llvm::ReturnInst;
 using llvm::Value;
 
 namespace rooibos
@@ -70,19 +69,6 @@ namespace rooibos
   {
     _stmts.push_back(ExpressionStatementAST::create(
           StringLiteralAST::create(inst.getOpcodeName())));
-  }
-
-  void
-  InstCodegenVisitor::visitReturnInst(ReturnInst & inst)
-  {
-    auto stmt = ReturnStatementAST::create();
-    Value * value = inst.getReturnValue();
-    if(value)
-    {
-      stmt->argument = codegen(_ctx.idents, value);
-    }
-    _stmts.insert(_stmts.end(), _epilogue.begin(), _epilogue.end());
-    _stmts.push_back(stmt);
   }
 
   void
