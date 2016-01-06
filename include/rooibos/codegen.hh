@@ -36,6 +36,9 @@ namespace rooibos
   ExpressionAST::ptr
   coerce(llvm::Type *, ExpressionAST::ptr);
 
+  ExpressionAST::ptr coerceToDouble(ExpressionAST::ptr);
+  ExpressionAST::ptr coerceToInt(ExpressionAST::ptr);
+
   IdentifierAST::ptr
   codegenHeapIdent(Identifiers &, const llvm::Type *);
 

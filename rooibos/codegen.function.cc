@@ -3,10 +3,12 @@
 #include "rooibos/InstCodegenVisitor.hh"
 #include "rooibos/InstContextVisitor.hh"
 
+using std::map;
 using std::set;
 using std::string;
 using std::vector;
 
+using llvm::BasicBlock;
 using llvm::Function;
 
 namespace rooibos
@@ -58,8 +60,7 @@ namespace rooibos
       auto funcIdent = idents.forFunction(func.getName());
       auto externIdent = idents.forFunctionExtern(func.getName());
 
-      InstContextVisitor reqs;
-      reqs.visit(func);
+      InstContextVisitor reqs(func);
 
       auto impl = FunctionDeclarationAST::create(funcIdent);
       auto & body = impl->body->body;
@@ -83,8 +84,45 @@ namespace rooibos
         paramCoercions.push_back(ExpressionStatementAST::create(paramType));
       }
 
-      InstCodegenVisitor instVisitor(ctx, vars, core, epilogue);
-      instVisitor.visit(func);
+      map<BasicBlock *, int> bbIndices;
+      map<int, BlockStatementAST::ptr> bbBodies;
+      for(auto & bbRef : func.getBasicBlockList())
+      {
+        auto bbIndex = bbIndices.size();
+        bbIndices.emplace(&bbRef, bbIndex);
+      }
+      for(auto & pair : bbIndices) // no codegen until they're ALL indexed
+      {
+        BasicBlock * bb = pair.first;
+        auto bbIndex = pair.second;
+        auto bbBody = BlockStatementAST::create();
+        bbBodies.emplace(bbIndex, bbBody);
+        InstCodegenVisitor instVisitor(
+            ctx, vars, bbIndices, bbBody->body, epilogue);
+        instVisitor.visit(bb);
+      }
+
+      if(reqs.needsProgramCounter())
+      {
+        vars.push_back(VariableDeclaratorAST::create(idents.PC,
+              NumberLiteralAST::create(0)));
+        auto pcWhile = WhileStatementAST::create(NumberLiteralAST::create(1));
+        auto pcSwitch = SwitchStatementAST::create(coerceToInt(idents.PC));
+        for(auto & pair : bbBodies)
+        {
+          auto caseTest = NumberLiteralAST::create(pair.first);
+          auto bbCase = SwitchCaseAST::create(caseTest, pair.second->body);
+          pcSwitch->cases.push_back(bbCase);
+        }
+        pcWhile->body->body.push_back(pcSwitch);
+        core.push_back(pcWhile);
+      }
+        else
+      {
+        auto onlyBlock = bbBodies[0];
+        auto & onlyBody = onlyBlock->body;
+        core.insert(core.end(), onlyBody.begin(), onlyBody.end());
+      }
 
       body.insert(body.begin(), paramCoercions.begin(), paramCoercions.end());
       if(!vars.empty())

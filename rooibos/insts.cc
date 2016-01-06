@@ -14,7 +14,6 @@ using llvm::CallInst;
 using llvm::ConstantInt;
 using llvm::dyn_cast_or_null;
 using llvm::Instruction;
-using llvm::Value;
 
 namespace rooibos
 {

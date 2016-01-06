@@ -23,18 +23,30 @@ namespace rooibos
   {
     if(type->isIntegerTy() || type->isPointerTy())
     {
-      return BinaryExpressionAST::create(expr, BinaryOp::BITWISE_OR,
-          NumberLiteralAST::create(0));
+      return coerceToInt(expr);
     }
       else if(type->isDoubleTy())
     {
-      return UnaryExpressionAST::create(UnaryOp::PLUS, expr);
+      return coerceToDouble(expr);
     }
       else
     {
       type->dump();
       panic("^-- is un-codegen-able type");
     }
+  }
+
+  ExpressionAST::ptr
+  coerceToInt(ExpressionAST::ptr expr)
+  {
+    return BinaryExpressionAST::create(expr, BinaryOp::BITWISE_OR,
+        NumberLiteralAST::create(0));
+  }
+
+  ExpressionAST::ptr
+  coerceToDouble(ExpressionAST::ptr expr)
+  {
+    return UnaryExpressionAST::create(UnaryOp::PLUS, expr);
   }
 
   long

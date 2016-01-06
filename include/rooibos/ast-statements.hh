@@ -20,6 +20,16 @@ namespace rooibos
     }
   };
 
+  struct ContinueStatementAST : StatementAST
+  {
+    ROOIBOS_AST_DEFINE_PTR(ContinueStatementAST)
+
+    void accept(StatementVisitor & visitor) const override
+    {
+      visitor.visit(*this);
+    }
+  };
+
   struct EmptyStatementAST : StatementAST
   {
     ROOIBOS_AST_DEFINE_PTR(EmptyStatementAST)
@@ -54,6 +64,53 @@ namespace rooibos
 
     explicit ReturnStatementAST(std::shared_ptr<ExpressionAST> arg=nullptr)
     : argument(arg)
+    {}
+
+    void accept(StatementVisitor & visitor) const override
+    {
+      visitor.visit(*this);
+    }
+  };
+
+  struct SwitchCaseAST : ASTNode
+  {
+    ROOIBOS_AST_DEFINE_PTR(SwitchCaseAST)
+
+    std::shared_ptr<ExpressionAST> test;
+    std::vector<std::shared_ptr<StatementAST>> consequent;
+
+    SwitchCaseAST(std::shared_ptr<ExpressionAST> test,
+                  const std::vector<std::shared_ptr<StatementAST>> & cons)
+    : test(test), consequent(cons)
+    {}
+  };
+
+  struct SwitchStatementAST : StatementAST
+  {
+    ROOIBOS_AST_DEFINE_PTR(SwitchStatementAST)
+
+    std::shared_ptr<ExpressionAST> discriminant;
+    std::vector<std::shared_ptr<SwitchCaseAST>> cases;
+
+    explicit SwitchStatementAST(std::shared_ptr<ExpressionAST> discriminant)
+    : discriminant(discriminant)
+    {}
+
+    void accept(StatementVisitor & visitor) const override
+    {
+      visitor.visit(*this);
+    }
+  };
+
+  struct WhileStatementAST : StatementAST
+  {
+    ROOIBOS_AST_DEFINE_PTR(WhileStatementAST)
+
+    std::shared_ptr<ExpressionAST> test;
+    std::shared_ptr<BlockStatementAST> body;
+
+    explicit WhileStatementAST(std::shared_ptr<ExpressionAST> test)
+    : test(test), body(BlockStatementAST::create())
     {}
 
     void accept(StatementVisitor & visitor) const override

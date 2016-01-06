@@ -18,6 +18,7 @@ namespace rooibos
       globals,
       heap, HEAP32, HEAP64F,
       Int32Array,
+      PC,
       SP, stdlib,
       this_;
 

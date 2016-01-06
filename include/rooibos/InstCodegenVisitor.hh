@@ -19,12 +19,18 @@ namespace rooibos
   public:
     InstCodegenVisitor(CodegenContext & ctx,
         std::vector<VariableDeclaratorAST::ptr> & vars,
+        const std::map<llvm::BasicBlock *, int> & bbIndices,
         std::vector<StatementAST::ptr> & stmts,
         const std::vector<StatementAST::ptr> & epilogue)
-    : _ctx(ctx), _vars(vars), _stmts(stmts), _epilogue(epilogue)
+    : _ctx(ctx)
+    , _vars(vars)
+    , _bbIndices(bbIndices)
+    , _stmts(stmts)
+    , _epilogue(epilogue)
     {}
 
     // Terminator instructions
+    void visitBranchInst(llvm::BranchInst &);
     void visitReturnInst(llvm::ReturnInst &);
 
     // Binary instructions
@@ -43,6 +49,7 @@ namespace rooibos
   private:
     CodegenContext & _ctx;
     std::vector<VariableDeclaratorAST::ptr> & _vars;
+    const std::map<llvm::BasicBlock *, int> & _bbIndices;
     std::vector<StatementAST::ptr> & _stmts;
     const std::vector<StatementAST::ptr> & _epilogue;
 

@@ -64,6 +64,7 @@ namespace rooibos
     HEAP32(mkid("HEAP32")),
     HEAP64F(mkid("HEAP64F")),
     Int32Array(mkid("Int32Array")),
+    PC(mkid("PC")),
     SP(mkid("SP")),
     stdlib(mkid("stdlib")),
     this_(mkid("this"))

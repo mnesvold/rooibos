@@ -44,9 +44,12 @@ namespace rooibos
       void visit(const FunctionDeclarationAST & ast) override;
       void visit(const VariableDeclarationAST & ast) override;
       void visit(const BlockStatementAST & ast) override;
+      void visit(const ContinueStatementAST & ast) override;
       void visit(const EmptyStatementAST & ast) override;
       void visit(const ExpressionStatementAST & ast) override;
       void visit(const ReturnStatementAST & ast) override;
+      void visit(const SwitchStatementAST & ast) override;
+      void visit(const WhileStatementAST & ast) override;
 
     private:
       json & j;
@@ -278,6 +281,14 @@ namespace rooibos
       recurse(j, "body", ast.body);
     }
 
+    void StatementJSONifier::visit(const ContinueStatementAST & ast)
+    {
+      j = {
+        { "type", "ContinueStatement" },
+        { "label", nullptr }
+      };
+    }
+
     void StatementJSONifier::visit(const EmptyStatementAST & ast)
     {
       j = {
@@ -299,6 +310,34 @@ namespace rooibos
         { "type", "ReturnStatement" }
       };
       recurse(j, "argument", ast.argument);
+    }
+
+    void StatementJSONifier::visit(const SwitchStatementAST & ast)
+    {
+      j = {
+        { "type", "SwitchStatement" },
+        { "cases", json::array() },
+        { "lexical", false }
+      };
+      recurse(j, "discriminant", ast.discriminant);
+      for(auto & caseAST : ast.cases)
+      {
+        json caseJSON = {
+          { "type", "SwitchCase" },
+        };
+        recurse(caseJSON, "test", caseAST->test);
+        recurse(caseJSON, "consequent", caseAST->consequent);
+        j["cases"] += caseJSON;
+      }
+    }
+
+    void StatementJSONifier::visit(const WhileStatementAST & ast)
+    {
+      j = {
+        { "type", "WhileStatement" }
+      };
+      recurse(j, "test", ast.test);
+      recurse(j, "body", ast.body);
     }
   }
 
