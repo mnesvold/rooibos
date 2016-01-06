@@ -1,6 +1,6 @@
 * [ ] Terminators
   * [X] `ret`
-  * [ ] `br`
+  * [X] `br`
   * [ ] `switch`
   * [ ] `indirectbr`
   * [ ] `invoke`
