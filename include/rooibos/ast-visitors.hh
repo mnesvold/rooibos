@@ -7,6 +7,7 @@ namespace rooibos
   struct BinaryExpressionAST;
   struct BlockStatementAST;
   struct CallExpressionAST;
+  struct ConditionalExpressionAST;
   struct ContinueStatementAST;
   struct DoubleLiteralAST;
   struct EmptyStatementAST;
@@ -51,6 +52,7 @@ namespace rooibos
     virtual void visit(const AssignmentExpressionAST &) = 0;
     virtual void visit(const BinaryExpressionAST &) = 0;
     virtual void visit(const CallExpressionAST &) = 0;
+    virtual void visit(const ConditionalExpressionAST &) = 0;
     virtual void visit(const FunctionExpressionAST &) = 0;
     virtual void visit(const IdentifierAST &) = 0;
     virtual void visit(const MemberExpressionAST &) = 0;

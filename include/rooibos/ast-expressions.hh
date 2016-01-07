@@ -15,6 +15,8 @@ namespace rooibos
     static const std::string SUB = "-";
     static const std::string BITWISE_OR = "|";
     static const std::string SHIFT_RIGHT = ">>";
+
+    static const std::string NEQ = "!=";
   }
 
   namespace UnaryOp
@@ -69,6 +71,26 @@ namespace rooibos
 
     explicit CallExpressionAST(std::shared_ptr<ExpressionAST> callee)
     : callee(callee)
+    {}
+
+    void accept(ExpressionVisitor & visitor) const override
+    {
+      visitor.visit(*this);
+    }
+  };
+
+  struct ConditionalExpressionAST : ExpressionAST
+  {
+    ROOIBOS_AST_DEFINE_PTR(ConditionalExpressionAST)
+
+    std::shared_ptr<ExpressionAST> test;
+    std::shared_ptr<ExpressionAST> consequent;
+    std::shared_ptr<ExpressionAST> alternate;
+
+    ConditionalExpressionAST(std::shared_ptr<ExpressionAST> test,
+                             std::shared_ptr<ExpressionAST> consequent,
+                             std::shared_ptr<ExpressionAST> alternate)
+    : test(test), consequent(consequent), alternate(alternate)
     {}
 
     void accept(ExpressionVisitor & visitor) const override

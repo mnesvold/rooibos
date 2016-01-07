@@ -3,6 +3,7 @@
 #include <algorithm>
 
 #include "rooibos/codegen.hh"
+#include "rooibos/util.hh"
 
 using std::equal;
 using std::make_shared;
@@ -11,8 +12,10 @@ using std::string;
 
 using llvm::Argument;
 using llvm::CallInst;
+using llvm::CmpInst;
 using llvm::ConstantInt;
 using llvm::dyn_cast_or_null;
+using llvm::ICmpInst;
 using llvm::Instruction;
 
 namespace rooibos
@@ -36,6 +39,23 @@ namespace rooibos
       name = name.substr(prefix.length());
       return true;
     }
+  }
+
+  void
+  InstCodegenVisitor::visitICmpInst(ICmpInst & inst)
+  {
+    if(inst.getPredicate() != CmpInst::ICMP_NE)
+    {
+      inst.dump();
+      panic("^-- has unimplemented predicate");
+    }
+    auto lhs = codegen(_ctx.idents, inst.getOperand(0));
+    auto rhs = codegen(_ctx.idents, inst.getOperand(1));
+    auto test = BinaryExpressionAST::create(lhs, BinaryOp::NEQ, rhs);
+    auto conditional = ConditionalExpressionAST::create(test,
+        NumberLiteralAST::create(1),
+        NumberLiteralAST::create(0));
+    _emit(inst, conditional);
   }
 
   void

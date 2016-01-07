@@ -24,6 +24,7 @@ namespace rooibos
       void visit(const AssignmentExpressionAST & ast) override;
       void visit(const BinaryExpressionAST &) override;
       void visit(const CallExpressionAST & ast) override;
+      void visit(const ConditionalExpressionAST & ast) override;
       void visit(const FunctionExpressionAST & ast) override;
       void visit(const IdentifierAST & ast) override;
       void visit(const MemberExpressionAST & ast) override;
@@ -161,6 +162,16 @@ namespace rooibos
       };
       recurse(j, "callee", ast.callee);
       recurse(j, "arguments", ast.arguments);
+    }
+
+    void ExpressionJSONifier::visit(const ConditionalExpressionAST & ast)
+    {
+      j = {
+        { "type", "ConditionalExpression" }
+      };
+      recurse(j, "test", ast.test);
+      recurse(j, "consequent", ast.consequent);
+      recurse(j, "alternate", ast.alternate);
     }
 
     void ExpressionJSONifier::visit(const FunctionExpressionAST & ast)

@@ -104,7 +104,7 @@ namespace rooibos
 
       if(reqs.needsProgramCounter())
       {
-        vars.push_back(VariableDeclaratorAST::create(idents.PC,
+        vars.insert(vars.begin(), VariableDeclaratorAST::create(idents.PC,
               NumberLiteralAST::create(0)));
         auto pcWhile = WhileStatementAST::create(NumberLiteralAST::create(1));
         auto pcSwitch = SwitchStatementAST::create(coerceToInt(idents.PC));
