@@ -4,28 +4,19 @@ ROOIBOS = $(TUP_CWD)/../rooibos/rooibos-codegen
 ESGENERATE = $(ROOT)/tools/node_modules/.bin/esgenerate
 UGLIFY = $(ROOT)/tools/node_modules/.bin/uglifyjs
 
-# Generate unoptimized bitcode
-: foreach *.c |> ^ Compiling %B test^ $(BIN)/clang -c -emit-llvm -o %o -O0 %f |> %B.bc {bc}
-
-# Use specific optimizations
-: foreach {bc} |> ^ Optimizing %B test^ $(BIN)/opt -mem2reg %f > %o |> %B.bc-opt {bcopt}
-
-# Pick up hand-written .ll tests
-: foreach *.ll-in |> ^ Compiling %B test^ $(BIN)/llvm-as < %f > %o |> %B.bc {bcopt}
+# Generate bitcode
+: foreach *.ll |> ^ Compiling %B test^ $(BIN)/llvm-as < %f > %o |> %B.bc {bc}
 
 # Generate JavaScript AST
-: foreach {bcopt} | $(ROOIBOS) |> ^ AST-ifying %B test^ $(ROOIBOS) < %f > %o |> %B.json {ast}
+: foreach {bc} | $(ROOIBOS) |> ^ Generating AST for %B test^ $(ROOIBOS) < %f > %o |> %B.json {ast}
 
-# Generate Javascript
-: foreach {ast} |> ^ JS-ifying %B test^ $(ESGENERATE) %f > %o |> %B.js {js}
+# Generate JavaScript
+: foreach {ast} |> ^ Generating JavaScript for %B test^ $(ESGENERATE) %f > %o |> %B.js {js}
 
 # Check against expected result
 : foreach {js} |> ^ Checking %B test^ diff --unified %B.expected.js %f && touch %o |> %B.ok
 
 ifdef EXTRA_TEST_OUTPUT
-    # Generate human-readable version (for debugging)
-    : foreach {bcopt} |> ^ Pretty-printing %B test^ $(BIN)/llvm-dis -o %o %f |> %B.ll
-
     # Minify (for comparison's sake)
     : foreach {js} |> ^ Minifying %B test^ $(UGLIFY) %f > %o |> %B.min.js
 endif
