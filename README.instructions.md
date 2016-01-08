@@ -61,6 +61,16 @@
   * [ ] `addrspacecast .. to`
 * [ ] Other operations
   * [ ] `icmp`
+    * [ ] `eq`
+    * [X] `ne`
+    * [ ] `ugt`
+    * [ ] `uge`
+    * [ ] `ult`
+    * [ ] `ule`
+    * [ ] `sgt`
+    * [ ] `sge`
+    * [ ] `slt`
+    * [ ] `sle`
   * [ ] `fcmp`
   * [ ] `phi`
   * [ ] `select`

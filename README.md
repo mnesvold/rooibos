@@ -28,16 +28,17 @@ If all dependencies are in place, this will build Rooibos and run the integratio
 
 ## Usage
 
-There's a working example in `tests/Tupfile`, but the gist of it is:
+Rooibos picks up from LLVM bitcode (`.bc` files). There's a working example in `tests/Tupfile`, but the gist of it is:
 
 ```bash
-$ edit foo.c
-$ clang -c -emit-llvm -o foo.bc foo.c
+$ generate foo.bc
 $ $BUILD/rooibos/rooibos-codegen < foo.bc > foo.ast
 $ $TOOLS/node_modules/.bin/esgenerate foo.ast > foo.js
 ```
 
-(For debugging's and curiosity's sakes, the Tupfile also generates human-readable `.ll` files for each test and minifies the resulting JavaScript into a separate `.min.js` file.)
+If you're starting from C(++) sources, the command you want is `clang -c -emit-llvm -o foo.bc foo.c`.
+
+(For curiosity's sake, the Tupfile also minifies the resulting JavaScript into a separate `.min.js` file if you're building the `default` variant.)
 
 ## Using the results
 
@@ -58,7 +59,7 @@ console.log(ASM.echo(42));
 
 ## Design goals
 
-Rooibos is meant to be not overly verbose in its output, partially inspired by C++'s "don't pay for what you don't use" philosophy. If no source code references the heap, for instance, then the runtime won't contain the code to set up the heap in the first place.
+Rooibos is meant to be not overly verbose in its output, partially inspired by C++'s "don't pay for what you don't use" philosophy. If no source code references the heap, for instance, then the runtime won't contain the code to set up the heap in the first place. As another example, branch instructions are implemented by emulating a program counter with a local `PC` variable and a `switch` nested in a `while (1)` loop. Functions with only one basic block don't need to emulate the program counter, so they don't.
 
 ## Implementation status
 
