@@ -5,7 +5,7 @@ ESGENERATE = $(ROOT)/tools/node_modules/.bin/esgenerate
 UGLIFY = $(ROOT)/tools/node_modules/.bin/uglifyjs
 
 # Generate bitcode
-: foreach *.ll |> ^ Compiling %B test^ $(BIN)/llvm-as < %f > %o |> %B.bc {bc}
+: foreach *.ll |> ^ Compiling %B test^ $(BIN)/llvm-as %f > %o |> %B.bc {bc}
 
 # Generate JavaScript AST
 : foreach {bc} | $(ROOIBOS) |> ^ Generating AST for %B test^ $(ROOIBOS) < %f > %o |> %B.json {ast}
