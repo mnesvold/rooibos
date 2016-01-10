@@ -17,6 +17,7 @@ using llvm::ConstantInt;
 using llvm::dyn_cast_or_null;
 using llvm::ICmpInst;
 using llvm::Instruction;
+using llvm::SelectInst;
 
 namespace rooibos
 {
@@ -55,6 +56,17 @@ namespace rooibos
     auto conditional = ConditionalExpressionAST::create(test,
         NumberLiteralAST::create(1),
         NumberLiteralAST::create(0));
+    _emit(inst, conditional);
+  }
+
+  void
+  InstCodegenVisitor::visitSelectInst(SelectInst & inst)
+  {
+    auto condition = codegen(_ctx.idents, inst.getCondition());
+    auto trueVal = codegen(_ctx.idents, inst.getTrueValue());
+    auto falseVal = codegen(_ctx.idents, inst.getFalseValue());
+    auto conditional = ConditionalExpressionAST::create(condition,
+        trueVal, falseVal);
     _emit(inst, conditional);
   }
 

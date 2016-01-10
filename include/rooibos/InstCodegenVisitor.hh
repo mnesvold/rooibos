@@ -44,6 +44,7 @@ namespace rooibos
 
     // Other instructions
     void visitICmpInst(llvm::ICmpInst &);
+    void visitSelectInst(llvm::SelectInst &);
     void visitCallInst(llvm::CallInst &);
     void visitInstruction(llvm::Instruction &); // fallback
 

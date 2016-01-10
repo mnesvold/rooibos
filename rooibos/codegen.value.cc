@@ -156,7 +156,7 @@ namespace rooibos
     }
       else if(ConstantInt * k = dyn_cast<ConstantInt>(value))
     {
-      expr = NumberLiteralAST::create(k->getSExtValue());
+      expr = NumberLiteralAST::create(k->getZExtValue());
     }
       else if(Instruction * inst = dyn_cast<Instruction>(value))
     {

@@ -73,7 +73,7 @@
     * [ ] `sle`
   * [ ] `fcmp`
   * [ ] `phi`
-  * [ ] `select`
+  * [X] `select`
   * [ ] `call`
     * [X] Basic case
     * [ ] Intrinsics (`llvm.*`)
