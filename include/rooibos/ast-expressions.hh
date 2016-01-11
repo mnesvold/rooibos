@@ -16,7 +16,12 @@ namespace rooibos
     static const std::string BITWISE_OR = "|";
     static const std::string SHIFT_RIGHT = ">>";
 
+    static const std::string EQ = "==";
     static const std::string NEQ = "!=";
+    static const std::string GT = ">";
+    static const std::string GTE = ">=";
+    static const std::string LT = "<";
+    static const std::string LTE = "<=";
   }
 
   namespace UnaryOp

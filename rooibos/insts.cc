@@ -45,14 +45,34 @@ namespace rooibos
   void
   InstCodegenVisitor::visitICmpInst(ICmpInst & inst)
   {
-    if(inst.getPredicate() != CmpInst::ICMP_NE)
+    string binaryOp;
+    switch(inst.getPredicate())
     {
-      inst.dump();
-      panic("^-- has unimplemented predicate");
+      case CmpInst::ICMP_EQ:
+        binaryOp = BinaryOp::EQ;
+        break;
+      case CmpInst::ICMP_NE:
+        binaryOp = BinaryOp::NEQ;
+        break;
+      case CmpInst::ICMP_SLT:
+        binaryOp = BinaryOp::LT;
+        break;
+      case CmpInst::ICMP_SLE:
+        binaryOp = BinaryOp::LTE;
+        break;
+      case CmpInst::ICMP_SGT:
+        binaryOp = BinaryOp::GT;
+        break;
+      case CmpInst::ICMP_SGE:
+        binaryOp = BinaryOp::GTE;
+        break;
+      default:
+        inst.dump();
+        panic("^-- has unimplemented predicate");
     }
     auto lhs = codegen(_ctx.idents, inst.getOperand(0));
     auto rhs = codegen(_ctx.idents, inst.getOperand(1));
-    auto test = BinaryExpressionAST::create(lhs, BinaryOp::NEQ, rhs);
+    auto test = BinaryExpressionAST::create(lhs, binaryOp, rhs);
     auto conditional = ConditionalExpressionAST::create(test,
         NumberLiteralAST::create(1),
         NumberLiteralAST::create(0));
