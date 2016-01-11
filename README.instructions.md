@@ -19,10 +19,10 @@
   * [X] `fmul`
   * [ ] `udiv`
   * [ ] `sdiv`
-  * [ ] `fdiv`
+  * [X] `fdiv`
   * [ ] `urem`
   * [ ] `srem`
-  * [ ] `frem`
+  * [X] `frem`
 * [ ] Bitwise binary operations
   * [ ] `shl`
   * [ ] `lshr`

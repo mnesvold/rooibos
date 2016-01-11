@@ -23,6 +23,10 @@ namespace rooibos
           return BinaryOp::MUL;
         case Instruction::BinaryOps::FSub:
           return BinaryOp::SUB;
+        case Instruction::BinaryOps::FDiv:
+          return BinaryOp::DIV;
+        case Instruction::BinaryOps::FRem:
+          return BinaryOp::MOD;
         default:
           inst.dump();
           panic("^-- has un-codegen-able operation");
