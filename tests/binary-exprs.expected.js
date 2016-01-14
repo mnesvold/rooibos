@@ -1,6 +1,20 @@
 (function (globals) {
     var ASM = function (stdlib, ffi, heap) {
         'use asm';
+        function f_add_i32(p_a, p_b) {
+            p_a = p_a | 0;
+            p_b = p_b | 0;
+            var l_0 = 0;
+            l_0 = (p_a | 0) + (p_b | 0) | 0;
+            return l_0 | 0;
+        }
+        function f_sub_i32(p_a, p_b) {
+            p_a = p_a | 0;
+            p_b = p_b | 0;
+            var l_0 = 0;
+            l_0 = (p_a | 0) - (p_b | 0) | 0;
+            return l_0 | 0;
+        }
         function f_add_doubles(p_a, p_b) {
             p_a = +p_a;
             p_b = +p_b;
@@ -37,6 +51,8 @@
             return +l_0;
         }
         return {
+            f_add_i32: f_add_i32,
+            f_sub_i32: f_sub_i32,
             f_add_doubles: f_add_doubles,
             f_sub_doubles: f_sub_doubles,
             f_mul_doubles: f_mul_doubles,
@@ -46,6 +62,8 @@
     };
     var asm = ASM(globals);
     var adaptors = {
+        add_i32: asm.f_add_i32,
+        sub_i32: asm.f_sub_i32,
         add_doubles: asm.f_add_doubles,
         sub_doubles: asm.f_sub_doubles,
         mul_doubles: asm.f_mul_doubles,

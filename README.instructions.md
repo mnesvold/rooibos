@@ -11,9 +11,9 @@
   * [ ] `cleanupret`
   * [ ] `unreachable`
 * [ ] Binary operations
-  * [ ] `add`
+  * [X] `add`
   * [X] `fadd`
-  * [ ] `sub`
+  * [X] `sub`
   * [X] `fsub`
   * [ ] `mul`
   * [X] `fmul`
