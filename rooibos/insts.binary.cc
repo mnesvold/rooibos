@@ -22,7 +22,9 @@ namespace rooibos
         case Instruction::BinaryOps::Sub:  return BinaryOp::SUB;
         case Instruction::BinaryOps::FSub: return BinaryOp::SUB;
         case Instruction::BinaryOps::FMul: return BinaryOp::MUL;
+        case Instruction::BinaryOps::SDiv: return BinaryOp::DIV;
         case Instruction::BinaryOps::FDiv: return BinaryOp::DIV;
+        case Instruction::BinaryOps::SRem: return BinaryOp::MOD;
         case Instruction::BinaryOps::FRem: return BinaryOp::MOD;
         default:
           inst.dump();

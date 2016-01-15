@@ -8,6 +8,16 @@ define i32 @sub_i32(i32 %a, i32 %b) {
   ret i32 %1
 }
 
+define i32 @sdiv_i32(i32 %a, i32 %b) {
+  %1 = sdiv i32 %a, %b
+  ret i32 %1
+}
+
+define i32 @srem_i32(i32 %a, i32 %b) {
+  %1 = srem i32 %a, %b
+  ret i32 %1
+}
+
 define double @add_doubles(double %a, double %b) {
   %1 = fadd double %a, %b
   ret double %1
